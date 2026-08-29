@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     let appData = { viagens: [], waypoints: [] };
     let viagemIdUrl = "";
 
@@ -101,7 +101,8 @@
             document.getElementById('nomeViagemTitulo').textContent = "Viagem não encontrada";
           }
 
-          carregarRoteiro();
+          // Substituído carregarRoteiro() direto pela função de foco
+          carregarRoteiroComFocoAutomatico();
         }
       } catch (e) {
         alert("Erro ao conectar com a planilha.");
@@ -110,7 +111,32 @@
       }
     }
 
-    function carregarRoteiro() {
+    // NOVA FUNÇÃO: Calcula qual o waypoint mais próximo do horário atual
+    function carregarRoteiroComFocoAutomatico() {
+      const waypointsViagem = appData.waypoints.filter(w => String(w.idViagem) === String(viagemIdUrl) && w.dataHora);
+
+      let idMaisProximo = null;
+      if (waypointsViagem.length > 0) {
+        const agora = new Date().getTime();
+        let menorDiferenca = Infinity;
+
+        waypointsViagem.forEach(w => {
+          const tempoWp = new Date(w.dataHora).getTime();
+          if (!isNaN(tempoWp)) {
+            const diferenca = Math.abs(tempoWp - agora);
+            if (diferenca < menorDiferenca) {
+              menorDiferenca = diferenca;
+              idMaisProximo = w.id;
+            }
+          }
+        });
+      }
+
+      carregarRoteiro(idMaisProximo);
+    }
+
+    // Função atualizada para receber o ID e focar no elemento
+    function carregarRoteiro(idWaypointParaFocar = null) {
       const container = document.getElementById('listaWaypoints');
       container.innerHTML = '';
 
@@ -131,12 +157,11 @@
 
       let orcadoTotal = 0;
       let pago = 0;
-      let diferencaGeral = 0; // Usado para calcular a Economia ou Excedido
+      let diferencaGeral = 0;
 
       Object.keys(gruposPorHorario).forEach(chave => {
         const itens = gruposPorHorario[chave];
         
-        // Regra 1: Soma de Orçado considerando apenas o card de maior valor no mesmo horário
         const maiorOrcadoDoHorario = Math.max(...itens.map(w => (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0))));
         orcadoTotal += maiorOrcadoDoHorario;
 
@@ -144,10 +169,8 @@
           const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
           const valorPagoItem = w.valorPago || 0;
           
-          // Regra 2: Soma de Pago independente de qualquer situação
           pago += valorPagoItem;
           
-          // Regra 3: Total Economia/Excedido = (Orçado - Pago) apenas se Pago > 0
           if (valorPagoItem > 0) {
             diferencaGeral += (valorOrcadoItem - valorPagoItem);
           }
@@ -161,7 +184,6 @@
       const labelFalta = document.getElementById('labelFalta');
       const totalFalta = document.getElementById('totalFalta');
 
-      // Se diferencaGeral for negativa, o gasto foi maior que o orçado (Excedido / Vermelho)
       if (diferencaGeral < 0) {
         totalFalta.textContent = `R$ ${Math.abs(diferencaGeral).toFixed(2)}`;
         containerFalta.className = "bg-rose-50 p-2.5 rounded-xl transition-colors";
@@ -169,7 +191,6 @@
         totalFalta.className = "text-sm font-extrabold text-rose-700";
         labelFalta.textContent = "Excedido";
       } else {
-        // Se for zero ou positivo, houve economia (Verde)
         totalFalta.textContent = `R$ ${diferencaGeral.toFixed(2)}`;
         containerFalta.className = "bg-emerald-50 p-2.5 rounded-xl transition-colors";
         labelFalta.className = "block text-[10px] font-bold text-emerald-600 uppercase";
@@ -181,6 +202,8 @@
         container.innerHTML = `<div class="text-center py-10 text-slate-400 font-medium text-sm">Nenhum ponto cadastrado para esta viagem.</div>`;
         return;
       }
+
+      let elementoParaFocar = null;
 
       Object.keys(gruposPorHorario).forEach(chave => {
         const itensDoHorario = gruposPorHorario[chave];
@@ -206,9 +229,13 @@
           itensDoHorario.forEach((w) => {
             const cardHtml = criarCardHTML(w, false);
             const cardWrapper = document.createElement('div');
+            cardWrapper.id = `card-wp-${w.id}`; // Adicionado ID para o scroll
             cardWrapper.className = "w-full flex-shrink-0 snap-start transition-all duration-300";
             cardWrapper.innerHTML = cardHtml;
             carrosselDiv.appendChild(cardWrapper);
+
+            // Captura o elemento se for o correto
+            if (w.id === idWaypointParaFocar) elementoParaFocar = cardWrapper;
           });
 
           carrosselContainerDiv.appendChild(carrosselDiv);
@@ -246,18 +273,33 @@
           const w = itensDoHorario[0];
           const cardHtml = criarCardHTML(w, true);
           const cardWrapper = document.createElement('div');
+          cardWrapper.id = `card-wp-${w.id}`; // Adicionado ID para o scroll
+          cardWrapper.className = "transition-all duration-300"; // Classe para a animação
           cardWrapper.innerHTML = cardHtml;
           blocoDiv.appendChild(cardWrapper);
+
+          // Captura o elemento se for o correto
+          if (w.id === idWaypointParaFocar) elementoParaFocar = cardWrapper;
         }
 
         container.appendChild(blocoDiv);
       });
 
       lucide.createIcons();
+
+      // NOVA LÓGICA: Executa o scroll até o card e faz ele brilhar temporariamente
+      if (elementoParaFocar) {
+        setTimeout(() => {
+          elementoParaFocar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          elementoParaFocar.classList.add('ring-4', 'ring-indigo-500', 'ring-offset-2', 'scale-[1.02]');
+          setTimeout(() => {
+            elementoParaFocar.classList.remove('ring-4', 'ring-indigo-500', 'ring-offset-2', 'scale-[1.02]');
+          }, 2000);
+        }, 150);
+      }
     }
 
-
-         function criarCardHTML(w, exibirDataHoraNoCard = false) {
+    function criarCardHTML(w, exibirDataHoraNoCard = false) {
       const temCidade = w.cidade && w.cidade.trim() !== "";
       const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
       const valorPagoItem = w.valorPago || 0;
@@ -326,7 +368,6 @@
       `;
     }
 
-    
     function formatarData(dataStr) {
       if (!dataStr) return '';
       const data = new Date(dataStr);
@@ -340,5 +381,8 @@
       return `${dia}/${mes}/${ano} às ${hora}:${min}`;
     }
   </script>
-</body>
-</html>
+
+
+
+          
+  
