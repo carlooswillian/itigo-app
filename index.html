@@ -531,7 +531,7 @@
       }
     }
 
-    function criarCardHTML(w, exibirDataHoraNoCard = false) {
+      function criarCardHTML(w, exibirDataHoraNoCard = false) {
       const temCidade = w.cidade && w.cidade.trim() !== "";
       const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
       const valorPagoItem = w.valorPago || 0;
@@ -541,13 +541,12 @@
         dataHoraFormatada = formatarData(w.dataHora);
       }
 
-      // Regras de cor para o card do Waypoint
-      let corValorPago = "text-slate-800"; // Cor padrão (se ainda não houve pagamento)
+      let corValorPago = "text-slate-800";
       if (valorPagoItem > 0) {
         if (valorOrcadoItem < valorPagoItem) {
-          corValorPago = "text-rose-600"; // Excedeu o Orçamento (Vermelho)
+          corValorPago = "text-rose-600";
         } else {
-          corValorPago = "text-blue-600"; // Dentro do Orçamento ou Economia (Azul)
+          corValorPago = "text-blue-600";
         }
       }
 
@@ -576,8 +575,15 @@
                 </div>
 
                 <div class="flex items-center gap-1 flex-shrink-0">
-                  ${temCidade ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${w.atividade}, ${w.cidade}`)}" target="_blank" class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl hover:bg-indigo-100 transition" title="Maps"><i data-lucide="map-pin" class="w-5 h-5"></i></a>` : ''}
-                  <button onclick='abrirModalWaypoint(${JSON.stringify(w)})' class="text-slate-500 hover:text-indigo-600 p-2 rounded-xl hover:bg-slate-100 transition" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                  ${temCidade ? `
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${w.atividade}, ${w.cidade}`)}" target="_blank" class="bg-indigo-50 text-indigo-600 p-2 rounded-xl hover:bg-indigo-100 transition" title="Abrir no Maps">
+                      <i data-lucide="map-pin" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://waze.com/ul?q=${encodeURIComponent(`${w.atividade}, ${w.cidade}`)}&navigate=yes" target="_blank" class="bg-sky-50 text-sky-600 p-2 rounded-xl hover:bg-sky-100 transition" title="Abrir no Waze">
+                      <i data-lucide="navigation" class="w-5 h-5"></i>
+                    </a>
+                  ` : ''}
+                  <button onclick='abrirModalWaypoint(${JSON.stringify(w)})' class="text-slate-500 hover:text-indigo-600 p-2 rounded-xl hover:bg-slate-100 transition ml-1" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                 </div>
               </div>
               ${w.observacoes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">${w.observacoes}</p>` : ''}
@@ -597,6 +603,9 @@
         </div>
       `;
     }
+
+
+                
 
     function formatarData(dataStr) {
       if (!dataStr) return '';
