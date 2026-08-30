@@ -285,10 +285,15 @@
       location.reload();
     }
 
-    function abrirDetalhesCompartilhado() {
-  if (!viagemIdUrl) return;
-  window.location.href = `detalhes.html?viagem=${viagemIdUrl}`;
+    function abrirDetalhes() {
+  const viagemId = document.getElementById('selectViagem').value;
+  if (!viagemId) {
+    alert("Selecione uma viagem primeiro.");
+    return;
+  }
+  window.location.href = `detalhes.html?viagem=${viagemId}`;
 }
+
 
 
     async function API(payload) {
