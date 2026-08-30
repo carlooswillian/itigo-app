@@ -33,7 +33,7 @@
     </div>
   </div>
 
-    <header class="sticky top-0 z-40 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
+  <header class="sticky top-0 z-40 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
     <div class="flex items-center gap-2">
       <div class="bg-indigo-600 text-white p-2 rounded-xl shadow">
         <i data-lucide="compass" class="w-5 h-5"></i>
@@ -41,9 +41,8 @@
       <h1 class="font-bold text-xl tracking-tight text-slate-900">Iti<span class="text-indigo-600">Go</span></h1>
     </div>
     
-    <!-- Botão de Dashboard/Detalhes -->
-    <button onclick="abrirDetalhes()" class="bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-xl shadow-sm transition" title="Dashboard e KPIs">
-      <i data-lucide="pie-chart" class="w-5 h-5"></i>
+    <button onclick="sairDoPainel()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Bloquear Painel">
+      <i data-lucide="lock" class="w-5 h-5 text-indigo-600"></i>
     </button>
   </header>
 
@@ -826,17 +825,6 @@
       document.getElementById('pagValorInput').value = valorAtual;
       document.getElementById('modalPagamento').classList.remove('hidden');
     }
-
-        function abrirDetalhes() {
-      // No index.html, usamos o select. No compartilhado, usamos a variavel da URL.
-      let id = typeof viagemIdUrl !== 'undefined' && viagemIdUrl ? viagemIdUrl : document.getElementById('viagemSelect').value;
-      if (!id) {
-        alert("Por favor, selecione uma viagem primeiro.");
-        return;
-      }
-      window.open(`detalhes.html?viagem=${id}`, '_blank');
-    }
-
     
     function fecharModalPagamento() { document.getElementById('modalPagamento').classList.add('hidden'); }
 
@@ -859,4 +847,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
