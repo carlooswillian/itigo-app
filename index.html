@@ -154,6 +154,18 @@
             <label class="font-semibold text-slate-600 block mb-1">Cidade</label>
             <input type="text" id="wpCidade" placeholder="Ex: Cabo Frio" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5" oninput="atualizarPreviews()">
           </div>
+          
+          <!-- ALTERAÇÃO AQUI: Novo campo Categoria -->
+          <div>
+            <label class="font-semibold text-slate-600 block mb-1">Categoria</label>
+            <select id="wpCategoria" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
+              <option value="Outros">Selecione (Opcional)</option>
+              <option value="Alimentação">Alimentação</option>
+              <option value="Hospedagem">Hospedagem</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Passeios">Passeios</option>
+            </select>
+          </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
@@ -286,15 +298,13 @@
     }
 
     function abrirDetalhes() {
-  const viagemId = document.getElementById('selectViagem').value;
-  if (!viagemId) {
-    alert("Selecione uma viagem primeiro.");
-    return;
-  }
-  window.location.href = `detalhes.html?viagem=${viagemId}`;
-}
-
-
+      const viagemId = document.getElementById('selectViagem').value;
+      if (!viagemId) {
+        alert("Selecione uma viagem primeiro.");
+        return;
+      }
+      window.location.href = `detalhes.html?viagem=${viagemId}`;
+    }
 
     async function API(payload) {
       if (userPin) payload.pin = userPin;
@@ -413,12 +423,11 @@
 
       let orcadoTotal = 0;
       let pago = 0;
-      let diferencaGeral = 0; // Usado para calcular a Economia ou Excedido
+      let diferencaGeral = 0; 
 
       Object.keys(gruposPorHorario).forEach(chave => {
         const itens = gruposPorHorario[chave];
         
-        // Regra 1: Soma de Orçado considerando apenas o card de maior valor no mesmo horário
         const maiorOrcadoDoHorario = Math.max(...itens.map(w => (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0))));
         orcadoTotal += maiorOrcadoDoHorario;
 
@@ -426,10 +435,8 @@
           const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
           const valorPagoItem = w.valorPago || 0;
           
-          // Regra 2: Soma de Pago independente de qualquer situação
           pago += valorPagoItem;
           
-          // Regra 3: Total Economia/Excedido = (Orçado - Pago) apenas se Pago > 0
           if (valorPagoItem > 0) {
             diferencaGeral += (valorOrcadoItem - valorPagoItem);
           }
@@ -443,7 +450,6 @@
       const labelFalta = document.getElementById('labelFalta');
       const totalFalta = document.getElementById('totalFalta');
 
-      // Se diferencaGeral for negativa, o gasto foi maior que o orçado (Excedido / Vermelho)
       if (diferencaGeral < 0) {
         totalFalta.textContent = `R$ ${Math.abs(diferencaGeral).toFixed(2)}`;
         containerFalta.className = "bg-rose-50 p-2.5 rounded-xl transition-colors";
@@ -451,7 +457,6 @@
         totalFalta.className = "text-sm font-extrabold text-rose-700";
         labelFalta.textContent = "Excedido";
       } else {
-        // Se for zero ou positivo, houve economia (Verde)
         totalFalta.textContent = `R$ ${diferencaGeral.toFixed(2)}`;
         containerFalta.className = "bg-emerald-50 p-2.5 rounded-xl transition-colors";
         labelFalta.className = "block text-[10px] font-bold text-emerald-600 uppercase";
@@ -557,7 +562,7 @@
       }
     }
 
-      function criarCardHTML(w, exibirDataHoraNoCard = false) {
+    function criarCardHTML(w, exibirDataHoraNoCard = false) {
       const temCidade = w.cidade && w.cidade.trim() !== "";
       const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
       const valorPagoItem = w.valorPago || 0;
@@ -575,6 +580,13 @@
           corValorPago = "text-blue-600";
         }
       }
+      
+      // Cor de fundo para o badge de categoria, se existir
+      let corBadgeCategoria = "bg-slate-100 text-slate-500";
+      if (w.categoria === "Alimentação") corBadgeCategoria = "bg-orange-50 text-orange-600 border border-orange-100";
+      if (w.categoria === "Hospedagem") corBadgeCategoria = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+      if (w.categoria === "Transporte") corBadgeCategoria = "bg-sky-50 text-sky-600 border border-sky-100";
+      if (w.categoria === "Passeios") corBadgeCategoria = "bg-emerald-50 text-emerald-600 border border-emerald-100";
 
       return `
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 relative h-full flex flex-col justify-between">
@@ -609,7 +621,7 @@
                       <i data-lucide="navigation" class="w-5 h-5"></i>
                     </a>
                   ` : ''}
-                  <button onclick='abrirModalWaypoint(${JSON.stringify(w)})' class="text-slate-500 hover:text-indigo-600 p-2 rounded-xl hover:bg-slate-100 transition ml-1" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                  <button onclick='abrirModalWaypoint(${JSON.stringify(w).replace(/'/g, "&#39;")})' class="text-slate-500 hover:text-indigo-600 p-2 rounded-xl hover:bg-slate-100 transition ml-1" title="Editar"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                 </div>
               </div>
               ${w.observacoes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">${w.observacoes}</p>` : ''}
@@ -620,6 +632,13 @@
               <span class="text-slate-400 block text-[10px]">Orçado / Pago</span>
               <span class="font-bold text-slate-700">R$ ${valorOrcadoItem.toFixed(2)}</span> / 
               <span class="font-extrabold ${corValorPago}">R$ ${valorPagoItem.toFixed(2)}</span>
+              
+              <!-- ALTERAÇÃO AQUI: Mostrando a categoria se existir -->
+              ${w.categoria && w.categoria !== 'Outros' ? `
+                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${corBadgeCategoria}">
+                  ${w.categoria}
+                </span>
+              ` : ''}
             </div>
             <div class="flex items-center gap-2">
               ${w.linkMidia ? `<a href="${w.linkMidia}" target="_blank" class="text-rose-500 bg-rose-50 p-2 rounded-xl" title="Vídeo"><i data-lucide="video" class="w-4 h-4"></i></a>` : ''}
@@ -629,9 +648,6 @@
         </div>
       `;
     }
-
-
-                
 
     function formatarData(dataStr) {
       if (!dataStr) return '';
@@ -719,6 +735,10 @@
         document.getElementById('wpId').value = wp.id || '';
         document.getElementById('wpAtividade').value = wp.atividade || '';
         document.getElementById('wpCidade').value = wp.cidade || '';
+        
+        // ALTERAÇÃO AQUI: Carregar Categoria salva
+        document.getElementById('wpCategoria').value = wp.categoria || 'Outros'; 
+        
         if (wp.dataHora) {
           const data = new Date(wp.dataHora);
           if (!isNaN(data.getTime())) {
@@ -743,6 +763,10 @@
         document.getElementById('wpId').value = '';
         document.getElementById('wpAtividade').value = '';
         document.getElementById('wpCidade').value = '';
+        
+        // ALTERAÇÃO AQUI: Resetar Categoria
+        document.getElementById('wpCategoria').value = 'Outros'; 
+
         document.getElementById('wpData').value = '';
         document.getElementById('wpHora').value = '';
         document.getElementById('wpValorOrcado').value = '';
@@ -813,7 +837,9 @@
         valorPago: parseFloat(document.getElementById('wpValorPago').value) || 0,
         linkFoto: document.getElementById('wpLinkFoto').value,
         linkMidia: document.getElementById('wpLinkMidia').value,
-        observacoes: document.getElementById('wpObservacoes').value
+        observacoes: document.getElementById('wpObservacoes').value,
+        // ALTERAÇÃO AQUI: Lendo a categoria do formulário
+        categoria: document.getElementById('wpCategoria').value 
       };
 
       fecharModalWaypoint();
@@ -873,4 +899,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
