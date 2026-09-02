@@ -607,6 +607,11 @@
                       style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                     ${w.atividade}
                   </h3>
+                  <!-- ALTERAÇÃO AQUI: Mostrando a categoria se existir -->
+              ${w.categoria && w.categoria !== 'Outros' ? `
+                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${corBadgeCategoria}">
+                  ${w.categoria}
+                </span>
                   
                   ${dataHoraFormatada ? `
                     <div class="mt-1.5 flex items-center gap-1 text-[10px] font-semibold text-slate-500">
@@ -637,11 +642,6 @@
               <span class="font-bold text-slate-700">R$ ${valorOrcadoItem.toFixed(2)}</span> / 
               <span class="font-extrabold ${corValorPago}">R$ ${valorPagoItem.toFixed(2)}</span>
               
-              <!-- ALTERAÇÃO AQUI: Mostrando a categoria se existir -->
-              ${w.categoria && w.categoria !== 'Outros' ? `
-                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${corBadgeCategoria}">
-                  ${w.categoria}
-                </span>
               ` : ''}
             </div>
             <div class="flex items-center gap-2">
