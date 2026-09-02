@@ -210,6 +210,7 @@
         'Hospedagem': { valor: 0, cor: 'bg-indigo-500' },
         'Transporte': { valor: 0, cor: 'bg-sky-500' },
         'Passeios': { valor: 0, cor: 'bg-emerald-500' },
+        'Lembranças': { valor: 0, cor: 'bg-teal-500' },
         'Outros': { valor: 0, cor: 'bg-slate-400' }
       };
 
@@ -217,7 +218,7 @@
         const valor = w.valorPago > 0 ? w.valorPago : (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0));
         if (valor === 0) return;
 
-        let catNome = w.categoria && categorias[w.categoria] ? w.categoria : 'Outros';
+        let catNome = w.categoria && categorias[w.categoria] ? w.categoria : 'Em branco';
         categorias[catNome].valor += valor;
       });
 
