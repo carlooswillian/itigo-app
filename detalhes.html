@@ -70,7 +70,7 @@
       <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wide">
         <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-500"></i> Gastos por Categoria
       </h3>
-      <p class="text-[10px] text-slate-400 leading-tight">Categorização automática baseada no nome da atividade.</p>
+      <p class="text-[10px] text-slate-400 leading-tight">Agrupamento direto pelas categorias definidas nos waypoints.</p>
       <div id="listaCategorias" class="space-y-3 pt-2">
         <!-- Renderizado via JS -->
       </div>
@@ -102,7 +102,6 @@
     };
 
     function voltar() {
-      // Volta para a página anterior (pode ser o index ou o compartilhado)
       window.history.back();
     }
 
@@ -174,7 +173,6 @@
       let pagoTotal = 0;
       let maiorGasto = { nome: 'Nenhuma', valor: 0 };
 
-      // Agrupamento por horário para não duplicar orçamento do mesmo card (mesma regra do painel)
       const gruposPorHorario = {};
       waypoints.forEach(w => {
         const chave = w.dataHora ? w.dataHora : `sem_data_${Math.random()}`;
@@ -190,7 +188,7 @@
         itens.forEach(w => {
           const pago = w.valorPago || 0;
           pagoTotal += pago;
-          const valorConsiderado = pago > 0 ? pago : (w.valorOrcado || w.valorEstimado || 0);
+          const valorConsiderado = pago > 0 ? pago : (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0));
           
           if (valorConsiderado > maiorGasto.valor) {
             maiorGasto.valor = valorConsiderado;
@@ -206,7 +204,7 @@
         document.getElementById('kpiMaiorGastoValor').textContent = `R$ ${maiorGasto.valor.toFixed(2)}`;
       }
 
-      // 3. Processar Categorias (Heurística baseada em palavras-chave)
+      // 3. Processar Categorias (Baseado diretamente na propriedade w.categoria)
       let categorias = {
         'Alimentação': { valor: 0, cor: 'bg-orange-500' },
         'Hospedagem': { valor: 0, cor: 'bg-indigo-500' },
@@ -216,30 +214,21 @@
       };
 
       waypoints.forEach(w => {
-        const valor = w.valorPago > 0 ? w.valorPago : (w.valorOrcado || w.valorEstimado || 0);
+        const valor = w.valorPago > 0 ? w.valorPago : (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0));
         if (valor === 0) return;
 
-        const texto = w.atividade.toLowerCase();
-        if (texto.match(/almoço|jantar|restaurante|café|lanche|pizza|burger|comida/)) {
-          categorias['Alimentação'].valor += valor;
-        } else if (texto.match(/hotel|pousada|airbnb|hostel|resort|check-in|hospedagem/)) {
-          categorias['Hospedagem'].valor += valor;
-        } else if (texto.match(/voo|aeroporto|uber|táxi|transfer|ônibus|trem|aluguel|carro|gasolina|pedágio/)) {
-          categorias['Transporte'].valor += valor;
-        } else if (texto.match(/passeio|ingresso|tour|parque|museu|praia|trilha|show/)) {
-          categorias['Passeios'].valor += valor;
-        } else {
-          categorias['Outros'].valor += valor;
-        }
+        let catNome = w.categoria && categorias[w.categoria] ? w.categoria : 'Outros';
+        categorias[catNome].valor += valor;
       });
 
       const totalCategorizado = Object.values(categorias).reduce((acc, cat) => acc + cat.valor, 0);
       const listaCategorias = document.getElementById('listaCategorias');
+      listaCategorias.innerHTML = '';
       
       Object.keys(categorias).forEach(nome => {
         const cat = categorias[nome];
         if (cat.valor > 0) {
-          const pct = Math.round((cat.valor / totalCategorizado) * 100);
+          const pct = totalCategorizado > 0 ? Math.round((cat.valor / totalCategorizado) * 100) : 0;
           listaCategorias.innerHTML += `
             <div>
               <div class="flex justify-between text-xs mb-1">
@@ -270,6 +259,7 @@
       });
 
       const listaCidades = document.getElementById('listaCidades');
+      listaCidades.innerHTML = '';
       Object.keys(diasPorCidade).forEach(cidade => {
         const qtdDias = diasPorCidade[cidade].size;
         listaCidades.innerHTML += `
