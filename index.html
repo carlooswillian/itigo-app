@@ -142,12 +142,20 @@
   <div id="modalWaypoint" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
     <div class="min-h-screen px-4 text-center flex items-center justify-center">
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 my-8 text-left inline-block align-middle relative">
-        <div class="flex justify-between items-center">
-          <h3 id="tituloModalWp" class="font-bold text-slate-900 text-lg">Novo Waypoint</h3>
-          <button id="btnExcluirModal" onclick="excluirWaypointDoModal()" class="hidden text-rose-500 hover:text-rose-700 p-2 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 text-xs font-semibold">
-            <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
-          </button>
-        </div>
+        <div class="flex justify-between items-center mb-4">
+  <h3 id="tituloModalWp" class="font-bold text-slate-900 text-lg">Novo Waypoint</h3>
+  <div class="flex gap-2">
+    <!-- NOVO BOTÃO DE DUPLICAR -->
+    <button id="btnDuplicarModal" onclick="duplicarWaypointNoModal()" class="hidden text-sky-500 hover:text-sky-700 p-2 rounded-xl hover:bg-sky-50 transition flex items-center gap-1 text-xs font-semibold">
+      <i data-lucide="copy" class="w-4 h-4"></i> Duplicar
+    </button>
+    <!-- BOTÃO DE EXCLUIR EXISTENTE -->
+    <button id="btnExcluirModal" onclick="excluirWaypointDoModal()" class="hidden text-rose-500 hover:text-rose-700 p-2 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 text-xs font-semibold">
+      <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
+    </button>
+  </div>
+</div>
+
         <input type="hidden" id="wpId">
 
         <div class="space-y-3 text-sm">
@@ -758,13 +766,17 @@
     }
 
     function abrirModalWaypoint(wp = null) {
-      const btnExcluir = document.getElementById('btnExcluirModal');
-      if (wp && typeof wp === 'object') {
-        document.getElementById('tituloModalWp').textContent = 'Editar Waypoint';
-        btnExcluir.classList.remove('hidden');
-        document.getElementById('wpId').value = wp.id || '';
-        document.getElementById('wpAtividade').value = wp.atividade || '';
-        document.getElementById('wpCidade').value = wp.cidade || '';
+  const btnExcluir = document.getElementById('btnExcluirModal');
+  const btnDuplicar = document.getElementById('btnDuplicarModal'); // Captura o novo botão
+
+  if (wp && typeof wp === 'object') {
+    document.getElementById('tituloModalWp').textContent = 'Editar Waypoint';
+    btnExcluir.classList.remove('hidden');
+    btnDuplicar.classList.remove('hidden'); // Mostra o botão ao editar
+    document.getElementById('wpId').value = wp.id || '';
+    
+    // ... (mantenha o resto do carregamento de dados como já está no seu código)
+
         
         // ALTERAÇÃO AQUI: Carregar Categoria salva
         document.getElementById('wpCategoria').value = wp.categoria || 'Outros'; 
@@ -787,12 +799,12 @@
         document.getElementById('wpLinkFoto').value = wp.linkFoto || '';
         document.getElementById('wpLinkMidia').value = wp.linkMidia || '';
         document.getElementById('wpObservacoes').value = wp.observacoes || '';
-      } else {
-        document.getElementById('tituloModalWp').textContent = 'Novo Waypoint';
-        btnExcluir.classList.add('hidden');
-        document.getElementById('wpId').value = '';
-        document.getElementById('wpAtividade').value = '';
-        document.getElementById('wpCidade').value = '';
+        } else {
+    document.getElementById('tituloModalWp').textContent = 'Novo Waypoint';
+    btnExcluir.classList.add('hidden');
+    btnDuplicar.classList.add('hidden'); // Esconde o botão ao criar novo
+    document.getElementById('wpId').value = '';
+
         
         // ALTERAÇÃO AQUI: Resetar Categoria
         document.getElementById('wpCategoria').value = 'Outros'; 
