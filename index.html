@@ -775,6 +775,8 @@
     btnDuplicar.classList.remove('hidden'); // Mostra o botão ao editar
     document.getElementById('wpId').value = wp.id || '';
     
+    document.getElementById('wpAtividade').value = wp.atividade || '';
+    document.getElementById('wpCidade').value = wp.cidade || '';
     // ... (mantenha o resto do carregamento de dados como já está no seu código)
 
         
@@ -804,6 +806,8 @@
     btnExcluir.classList.add('hidden');
     btnDuplicar.classList.add('hidden'); // Esconde o botão ao criar novo
     document.getElementById('wpId').value = '';
+    document.getElementById('wpAtividade').value = '';
+    document.getElementById('wpCidade').value = '';
 
         
         // ALTERAÇÃO AQUI: Resetar Categoria
@@ -913,6 +917,28 @@
         }
       } finally { esconderLoading(); }
     }
+
+    // Cole isso no seu HTML, dentro da tag <script>
+function duplicarWaypointNoModal() {
+  // 1. Limpa o ID. Ao salvar, o sistema vai tratar como um novo waypoint!
+  document.getElementById('wpId').value = '';
+
+  // 2. Adiciona "(Cópia)" ao final da atividade
+  const inputAtividade = document.getElementById('wpAtividade');
+  if (inputAtividade.value) {
+    inputAtividade.value = inputAtividade.value + " (Cópia)";
+  }
+
+  // 3. Muda o título do Modal
+  document.getElementById('tituloModalWp').textContent = 'Novo Waypoint (Cópia)';
+
+  // 4. Esconde os botões
+  document.getElementById('btnExcluirModal').classList.add('hidden');
+  document.getElementById('btnDuplicarModal').classList.add('hidden');
+
+  alert("Pronto! Edite o horário ou outros dados e clique em 'Salvar Waypoint'.");
+}
+
 
     function abrirModalPagamento(id, valorAtual) {
       document.getElementById('pagWpId').value = id;
