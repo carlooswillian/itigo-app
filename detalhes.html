@@ -145,7 +145,7 @@
       }
     }
 
-    function processarDashboard(waypoints) {
+        function processarDashboard(waypoints) {
       if (waypoints.length === 0) {
         document.getElementById('txtDatas').textContent = "Nenhum ponto cadastrado.";
         return;
@@ -181,7 +181,7 @@
         document.getElementById('barraProgresso').style.width = `${progresso}%`;
       }
 
-      // 2. Processar Financeiro (Lógica idêntica ao Index)
+      // 2. Processar Financeiro
       let orcadoTotal = 0;
       let pagoTotal = 0;
       let diferencaGeral = 0;
@@ -203,7 +203,6 @@
           const valorPagoItem = w.valorPago || 0;
           pagoTotal += valorPagoItem;
           
-          // Calcula diferença baseada no que JÁ FOI pago
           if (valorPagoItem > 0) {
             diferencaGeral += (valorOrcadoItem - valorPagoItem);
           }
@@ -274,12 +273,24 @@
         listaCategorias.innerHTML = '<p class="text-xs text-slate-400">Nenhum valor financeiro registrado.</p>';
       }
 
-      // 4. Processar Gastos por Dia
+      // 4. Processar Gastos por Dia (Corrigido)
       const gastosPorDia = {};
       let maiorGastoDia = 0;
 
       waypointsOrdenados.forEach(w => {
-        const dataStr = w.dataHora ? w.dataHora.split('T')[0] : 'Sem Data';
+        let dataStr = 'Sem Data';
+        
+        // Pega a data de forma segura, ignorando o formato que vier
+        if (w.dataHora) {
+          const d = new Date(w.dataHora);
+          if (!isNaN(d.getTime())) {
+            const ano = d.getFullYear();
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const dia = String(d.getDate()).padStart(2, '0');
+            dataStr = `${ano}-${mes}-${dia}`;
+          }
+        }
+
         const valor = w.valorPago > 0 ? w.valorPago : (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0));
         
         if (!gastosPorDia[dataStr]) gastosPorDia[dataStr] = 0;
@@ -317,7 +328,7 @@
         listaGastosDia.innerHTML = '<p class="text-xs text-slate-400">Nenhum valor diário registrado.</p>';
       }
 
-      // 5. Processar Diárias por Cidade (Calculado via check-in de Hospedagem)
+      // 5. Processar Diárias por Cidade (Corrigido)
       const listaCidades = document.getElementById('listaCidades');
       listaCidades.innerHTML = '';
       
@@ -329,22 +340,23 @@
         for (let i = 0; i < hospedagens.length; i++) {
           const hosp = hospedagens[i];
           const cidade = hosp.cidade ? hosp.cidade.trim() : 'Desconhecida';
-          const dataCheckin = new Date(hosp.dataHora.split('T')[0]);
+          
+          // Zera as horas para calcular apenas a diferença de dias
+          const dataCheckin = new Date(hosp.dataHora);
+          dataCheckin.setHours(0, 0, 0, 0);
           
           let dataCheckout;
           if (i < hospedagens.length - 1) {
-            // Check-out é a data da próxima hospedagem
-            dataCheckout = new Date(hospedagens[i+1].dataHora.split('T')[0]);
+            dataCheckout = new Date(hospedagens[i+1].dataHora);
           } else {
-            // Última hospedagem: Check-out é a data do último waypoint da viagem
             const ultimoWp = waypointsOrdenados[waypointsOrdenados.length - 1];
-            dataCheckout = new Date(ultimoWp.dataHora.split('T')[0]);
+            dataCheckout = new Date(ultimoWp.dataHora);
           }
+          dataCheckout.setHours(0, 0, 0, 0);
 
           const diffTime = Math.abs(dataCheckout - dataCheckin);
           let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           
-          // Se entrar e sair no mesmo dia (ou for o último waypoint no mesmo dia do check-in), conta como 1
           if (diffDays === 0) diffDays = 1;
 
           if (!diasPorCidade[cidade]) diasPorCidade[cidade] = 0;
@@ -365,6 +377,11 @@
         listaCidades.innerHTML = '<p class="text-xs text-slate-400 col-span-2 text-center py-2 bg-slate-50 rounded-xl border border-slate-100">Cadastre eventos do tipo "Hospedagem" para calcular o tempo em cada cidade.</p>';
       }
     }
+
+
+    
+          
+              
 
     function formatarDataCurta(data) {
       const dia = String(data.getDate()).padStart(2, '0');
