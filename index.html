@@ -34,35 +34,23 @@
   </div>
 
   <header class="sticky top-0 z-40 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
-  
-  <!-- LADO ESQUERDO: Logo e Nome do App -->
-  <div class="flex items-center gap-2">
-    <div class="bg-indigo-600 text-white p-2 rounded-xl shadow">
-      <i data-lucide="compass" class="w-5 h-5"></i>
+    <div class="flex items-center gap-2">
+      <div class="bg-indigo-600 text-white p-2 rounded-xl shadow">
+        <i data-lucide="compass" class="w-5 h-5"></i>
+      </div>
+      <h1 class="font-bold text-xl tracking-tight text-slate-900">Iti<span class="text-indigo-600">Go</span></h1>
     </div>
-    <h1 class="font-bold text-xl tracking-tight text-slate-900">Iti<span class="text-indigo-600">Go</span></h1>
-  </div>
-
-  <!-- LADO DIREITO: Grupo de Botões -->
-  <div class="flex items-center gap-2">
-    
-    <!-- Botão de Detalhes -->
-    <button onclick="abrirDetalhes()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Detalhes da Viagem">
-      <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
-    </button>
-    
-    <!-- Botão de Bloquear -->
-    <button onclick="sairDoPainel()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Bloquear Painel">
-      <i data-lucide="lock" class="w-5 h-5 text-indigo-600"></i>
-    </button>
-    
-  </div>
-  
-</header>
-
+    <div class="flex items-center gap-2">
+      <button onclick="abrirDetalhes()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Detalhes da Viagem">
+        <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
+      </button>
+      <button onclick="sairDoPainel()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Bloquear Painel">
+        <i data-lucide="lock" class="w-5 h-5 text-indigo-600"></i>
+      </button>
+    </div>
+  </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
-
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
       <div class="flex items-center justify-between gap-2">
         <label class="text-xs font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">Viagem Selecionada</label>
@@ -101,20 +89,16 @@
       </div>
     </div>
 
-
     <div class="space-y-4" id="listaWaypoints"></div>
-
   </main>
 
   <button onclick="abrirModalWaypoint()" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 active:scale-90 transition z-30">
     <i data-lucide="plus" class="w-6 h-6"></i>
   </button>
 
-    <!-- BOTÃO FLUTUANTE DE VOLTAR AO TOPO (Lado Esquerdo) -->
   <button id="btnVoltarTopo" onclick="voltarAoTopo()" class="fixed bottom-6 left-6 bg-slate-800 text-white p-4 rounded-full shadow-lg hover:bg-slate-900 active:scale-90 transition-all duration-300 z-30 opacity-0 pointer-events-none -translate-y-4" title="Voltar ao topo">
     <i data-lucide="arrow-up" class="w-6 h-6"></i>
   </button>
-
 
   <div id="modalViagem" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
@@ -127,7 +111,6 @@
     </div>
   </div>
 
-  <!-- MODAL DE RENOMEAR VIAGEM -->
   <div id="modalRenomearViagem" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <h3 class="font-bold text-slate-900 text-lg">Renomear Viagem</h3>
@@ -143,18 +126,16 @@
     <div class="min-h-screen px-4 text-center flex items-center justify-center">
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 my-8 text-left inline-block align-middle relative">
         <div class="flex justify-between items-center mb-4">
-  <h3 id="tituloModalWp" class="font-bold text-slate-900 text-lg">Novo Waypoint</h3>
-  <div class="flex gap-2">
-    <!-- NOVO BOTÃO DE DUPLICAR -->
-    <button id="btnDuplicarModal" onclick="duplicarWaypointNoModal()" class="hidden text-sky-500 hover:text-sky-700 p-2 rounded-xl hover:bg-sky-50 transition flex items-center gap-1 text-xs font-semibold">
-      <i data-lucide="copy" class="w-4 h-4"></i> Duplicar
-    </button>
-    <!-- BOTÃO DE EXCLUIR EXISTENTE -->
-    <button id="btnExcluirModal" onclick="excluirWaypointDoModal()" class="hidden text-rose-500 hover:text-rose-700 p-2 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 text-xs font-semibold">
-      <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
-    </button>
-  </div>
-</div>
+          <h3 id="tituloModalWp" class="font-bold text-slate-900 text-lg">Novo Waypoint</h3>
+          <div class="flex gap-2">
+            <button id="btnDuplicarModal" onclick="duplicarWaypointNoModal()" class="hidden text-sky-500 hover:text-sky-700 p-2 rounded-xl hover:bg-sky-50 transition flex items-center gap-1 text-xs font-semibold">
+              <i data-lucide="copy" class="w-4 h-4"></i> Duplicar
+            </button>
+            <button id="btnExcluirModal" onclick="excluirWaypointDoModal()" class="hidden text-rose-500 hover:text-rose-700 p-2 rounded-xl hover:bg-rose-50 transition flex items-center gap-1 text-xs font-semibold">
+              <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
+            </button>
+          </div>
+        </div>
 
         <input type="hidden" id="wpId">
 
@@ -163,13 +144,10 @@
             <label class="font-semibold text-slate-600 block mb-1">Ponto de Parada / Atividade</label>
             <input type="text" id="wpAtividade" placeholder="Ex: Café da manhã" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5" oninput="atualizarPreviews()">
           </div>
-
           <div>
             <label class="font-semibold text-slate-600 block mb-1">Cidade</label>
             <input type="text" id="wpCidade" placeholder="Ex: Cabo Frio" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5" oninput="atualizarPreviews()">
           </div>
-          
-          <!-- ALTERAÇÃO AQUI: Novo campo Categoria -->
           <div>
             <label class="font-semibold text-slate-600 block mb-1">Categoria</label>
             <select id="wpCategoria" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
@@ -182,7 +160,6 @@
               <option value="Outros">Outros</option>
             </select>
           </div>
-
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="font-semibold text-slate-600 block mb-1">Data</label>
@@ -193,7 +170,6 @@
               <input type="time" id="wpHora" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
             </div>
           </div>
-
           <div id="boxPreviewMaps" class="hidden space-y-2">
             <label class="font-semibold text-slate-600 block text-xs">Pré-visualização do Local</label>
             <div class="relative w-full h-40 rounded-xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
@@ -205,7 +181,6 @@
               </a>
             </div>
           </div>
-
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="font-semibold text-slate-600 block mb-1">Valor Orçado (R$)</label>
@@ -216,7 +191,6 @@
               <input type="number" step="0.01" id="wpValorPago" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5">
             </div>
           </div>
-
           <div class="space-y-2">
             <div class="flex justify-between items-center">
               <label class="font-semibold text-slate-600 block text-xs">Foto do Lugar (URL)</label>
@@ -225,17 +199,14 @@
               </a>
             </div>
             <input type="url" id="wpLinkFoto" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs" oninput="atualizarPreviewFoto()">
-            
             <div id="boxPreviewFoto" class="hidden relative w-full h-36 rounded-xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
               <img id="imgPreview" class="w-full h-full object-cover" alt="Prévia" onerror="this.style.display='none'">
             </div>
           </div>
-
           <div>
             <label class="font-semibold text-slate-600 block mb-1">Link de Vídeo / Mídia</label>
             <input type="url" id="wpLinkMidia" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
           </div>
-
           <div>
             <label class="font-semibold text-slate-600 block mb-1">Observações</label>
             <textarea id="wpObservacoes" rows="2" placeholder="Dicas..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5"></textarea>
@@ -272,16 +243,122 @@
     </div>
   </div>
 
+  <!-- MODAL DE ALERTA/CONFIRMAÇÃO CUSTOMIZADO -->
+  <div id="modalAlertaCustom" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 transform scale-95 transition-transform duration-300" id="modalAlertaContent">
+      <div class="flex items-start gap-4">
+        <div id="modalAlertaIcon" class="w-12 h-12 rounded-full flex items-center justify-center shrink-0">
+           <!-- Ícone injetado via JS -->
+        </div>
+        <div class="space-y-1 mt-1">
+          <h3 id="modalAlertaTitulo" class="font-bold text-slate-900 text-lg leading-tight">Aviso</h3>
+          <p id="modalAlertaMensagem" class="text-sm text-slate-600 leading-relaxed"></p>
+        </div>
+      </div>
+      <div id="modalAlertaBotoes" class="flex gap-2 justify-end pt-2">
+        <!-- Botões injetados via JS -->
+      </div>
+    </div>
+  </div>
+
   <script>
     let appData = { viagens: [], waypoints: [] };
     let userPin = null;
+
+    // --- FUNÇÕES DO MODAL CUSTOMIZADO (ALERT / CONFIRM) ---
+    function showAlert(mensagem, titulo = "Aviso", tipo = 'info') {
+      return new Promise((resolve) => {
+        prepararModalAlerta(mensagem, titulo, tipo, false, resolve);
+      });
+    }
+
+    function showConfirm(mensagem, titulo = "Confirmação") {
+      return new Promise((resolve) => {
+        prepararModalAlerta(mensagem, titulo, 'aviso', true, resolve);
+      });
+    }
+
+    function prepararModalAlerta(mensagem, titulo, tipo, isConfirm, resolve) {
+      const modal = document.getElementById('modalAlertaCustom');
+      const content = document.getElementById('modalAlertaContent');
+      
+      document.getElementById('modalAlertaTitulo').textContent = titulo;
+      document.getElementById('modalAlertaMensagem').textContent = mensagem;
+
+      let iconHtml = '';
+      let iconBg = '';
+
+      if (tipo === 'erro') {
+        iconHtml = '<i data-lucide="alert-circle" class="w-6 h-6 text-rose-600"></i>';
+        iconBg = 'bg-rose-100';
+      } else if (tipo === 'sucesso') {
+        iconHtml = '<i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-600"></i>';
+        iconBg = 'bg-emerald-100';
+      } else if (tipo === 'aviso') {
+        iconHtml = '<i data-lucide="alert-triangle" class="w-6 h-6 text-amber-600"></i>';
+        iconBg = 'bg-amber-100';
+      } else {
+        iconHtml = '<i data-lucide="info" class="w-6 h-6 text-blue-600"></i>';
+        iconBg = 'bg-blue-100';
+      }
+
+      const iconContainer = document.getElementById('modalAlertaIcon');
+      iconContainer.className = `w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${iconBg}`;
+      iconContainer.innerHTML = iconHtml;
+
+      const botoesContainer = document.getElementById('modalAlertaBotoes');
+      botoesContainer.innerHTML = '';
+
+      if (isConfirm) {
+        const btnCancel = document.createElement('button');
+        btnCancel.className = "px-4 py-2 text-slate-600 font-semibold text-sm hover:bg-slate-100 rounded-xl transition";
+        btnCancel.textContent = "Cancelar";
+        btnCancel.onclick = () => { fecharModalAlerta(); resolve(false); };
+
+        const btnConfirm = document.createElement('button');
+        btnConfirm.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm rounded-xl shadow transition";
+        btnConfirm.textContent = "Confirmar";
+        btnConfirm.onclick = () => { fecharModalAlerta(); resolve(true); };
+
+        botoesContainer.appendChild(btnCancel);
+        botoesContainer.appendChild(btnConfirm);
+      } else {
+        const btnOk = document.createElement('button');
+        btnOk.className = "px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-xl shadow transition w-full sm:w-auto";
+        btnOk.textContent = "Entendi";
+        btnOk.onclick = () => { fecharModalAlerta(); resolve(true); };
+        botoesContainer.appendChild(btnOk);
+      }
+
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+      
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      });
+    }
+
+    function fecharModalAlerta() {
+      const modal = document.getElementById('modalAlertaCustom');
+      const content = document.getElementById('modalAlertaContent');
+      
+      modal.classList.add('opacity-0');
+      content.classList.remove('scale-100');
+      content.classList.add('scale-95');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+    // --- FIM FUNÇÕES DO MODAL CUSTOMIZADO ---
 
     window.onload = () => {
       lucide.createIcons();
       verificarAutenticacaoRaiz();
     };
 
-        // Adicione esta lógica logo abaixo de window.onload ou no seu script principal
     window.addEventListener('scroll', () => {
       const btnTopo = document.getElementById('btnVoltarTopo');
       if (window.scrollY > 300) {
@@ -299,7 +376,6 @@
         behavior: 'smooth'
       });
     }
-
 
     function verificarAutenticacaoRaiz() {
       const pinSalvo = localStorage.getItem('itigo_pin_raiz');
@@ -324,7 +400,7 @@
         document.getElementById('inputPinRaiz').value = '';
         carregarDados();
       } else {
-        alert("PIN Incorreto!");
+        showAlert("O PIN que você digitou está incorreto. Tente novamente.", "PIN Inválido", "erro");
       }
     }
 
@@ -336,7 +412,7 @@
     function abrirDetalhes() {
       const viagemId = document.getElementById('selectViagem').value;
       if (!viagemId) {
-        alert("Selecione uma viagem primeiro.");
+        showAlert("Por favor, selecione uma viagem antes de visualizar os detalhes.", "Atenção", "aviso");
         return;
       }
       window.location.href = `detalhes.html?viagem=${viagemId}`;
@@ -357,7 +433,7 @@
       const nomeViagem = selectViagem.options[selectViagem.selectedIndex]?.text || "Viagem";
 
       if (!viagemId) {
-        alert("Selecione uma viagem primeiro.");
+        showAlert("Selecione uma viagem antes de compartilhar.", "Atenção", "aviso");
         return;
       }
 
@@ -366,10 +442,10 @@
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(linkCompartilhamento).then(() => {
-          alert(`Link da viagem "${nomeViagem}" copiado com sucesso!`);
+          showAlert(`O link da viagem "${nomeViagem}" foi copiado com sucesso!`, "Copiado!", "sucesso");
         });
       } else {
-        prompt("Copie o link abaixo:", linkCompartilhamento);
+        showAlert(`Seu navegador não suporta cópia automática. Copie o link abaixo:\n\n${linkCompartilhamento}`, "Link Gerado", "info");
       }
     }
 
@@ -390,7 +466,7 @@
           renderizarSeletorViagem();
         }
       } catch(e) {
-        alert("Erro ao conectar com a planilha.");
+        showAlert("Ocorreu um erro ao tentar conectar com a base de dados. Verifique sua conexão.", "Erro de Conexão", "erro");
       }
     }
 
@@ -463,7 +539,6 @@
 
       Object.keys(gruposPorHorario).forEach(chave => {
         const itens = gruposPorHorario[chave];
-        
         const maiorOrcadoDoHorario = Math.max(...itens.map(w => (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0))));
         orcadoTotal += maiorOrcadoDoHorario;
 
@@ -617,7 +692,6 @@
         }
       }
       
-      // Cor de fundo para o badge de categoria, se existir
       let corBadgeCategoria = "bg-slate-100 text-slate-500";
       if (w.categoria === "Alimentação") corBadgeCategoria = "bg-orange-50 text-orange-600 border border-orange-100";
       if (w.categoria === "Hospedagem") corBadgeCategoria = "bg-indigo-50 text-indigo-600 border border-indigo-100";
@@ -636,12 +710,10 @@
                   <span class="inline-block text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full uppercase tracking-wider mb-1">
                     ${w.cidade || 'Atividade Geral'}
                   </span>
-
                   <h3 class="font-bold text-slate-900 text-sm sm:text-base leading-tight break-words" 
                       style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                     ${w.atividade}
                   </h3>
-                  <!-- ALTERAÇÃO AQUI: Mostrando a categoria se existir -->
               ${w.categoria && w.categoria !== 'Em branco' ? `
                 <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${corBadgeCategoria}">
                   ${w.categoria}
@@ -676,7 +748,6 @@
               <span class="text-slate-400 block text-[10px]">Orçado / Pago</span>
               <span class="font-bold text-slate-700">R$ ${valorOrcadoItem.toFixed(2)}</span> / 
               <span class="font-extrabold ${corValorPago}">R$ ${valorPagoItem.toFixed(2)}</span>
-              
             </div>
             <div class="flex items-center gap-2">
               ${w.linkMidia ? `<a href="${w.linkMidia}" target="_blank" class="text-rose-500 bg-rose-50 p-2 rounded-xl" title="Vídeo"><i data-lucide="video" class="w-4 h-4"></i></a>` : ''}
@@ -725,7 +796,7 @@
       const nomeAtual = selectViagem.options[selectViagem.selectedIndex]?.text || "";
 
       if (!idAtual) {
-        alert("Selecione uma viagem para renomear.");
+        showAlert("Selecione uma viagem na lista antes de tentar renomear.", "Atenção", "aviso");
         return;
       }
 
@@ -742,7 +813,7 @@
       const novoNome = document.getElementById('inputNovoNomeViagem').value.trim();
 
       if (!novoNome) {
-        alert("O nome da viagem não pode estar vazio.");
+        showAlert("O nome da viagem não pode ficar em branco.", "Atenção", "aviso");
         return;
       }
 
@@ -756,31 +827,28 @@
           document.getElementById('selectViagem').value = idViagemAtual;
           carregarRoteiro();
         } else {
-          alert(res.mensagem || "Erro ao renomear viagem.");
+          showAlert(res.mensagem || "Ocorreu um erro inesperado ao renomear a viagem.", "Erro", "erro");
         }
       } catch (e) {
-        alert("Erro de conexão ao renomear viagem.");
+        showAlert("Não foi possível conectar ao servidor para renomear a viagem.", "Erro", "erro");
       } finally {
         esconderLoading();
       }
     }
 
     function abrirModalWaypoint(wp = null) {
-  const btnExcluir = document.getElementById('btnExcluirModal');
-  const btnDuplicar = document.getElementById('btnDuplicarModal'); // Captura o novo botão
+      const btnExcluir = document.getElementById('btnExcluirModal');
+      const btnDuplicar = document.getElementById('btnDuplicarModal'); 
 
-  if (wp && typeof wp === 'object') {
-    document.getElementById('tituloModalWp').textContent = 'Editar Waypoint';
-    btnExcluir.classList.remove('hidden');
-    btnDuplicar.classList.remove('hidden'); // Mostra o botão ao editar
-    document.getElementById('wpId').value = wp.id || '';
-    
-    document.getElementById('wpAtividade').value = wp.atividade || '';
-    document.getElementById('wpCidade').value = wp.cidade || '';
-    // ... (mantenha o resto do carregamento de dados como já está no seu código)
-
+      if (wp && typeof wp === 'object') {
+        document.getElementById('tituloModalWp').textContent = 'Editar Waypoint';
+        btnExcluir.classList.remove('hidden');
+        btnDuplicar.classList.remove('hidden'); 
+        document.getElementById('wpId').value = wp.id || '';
         
-        // ALTERAÇÃO AQUI: Carregar Categoria salva
+        document.getElementById('wpAtividade').value = wp.atividade || '';
+        document.getElementById('wpCidade').value = wp.cidade || '';
+        
         document.getElementById('wpCategoria').value = wp.categoria || 'Outros'; 
         
         if (wp.dataHora) {
@@ -801,18 +869,14 @@
         document.getElementById('wpLinkFoto').value = wp.linkFoto || '';
         document.getElementById('wpLinkMidia').value = wp.linkMidia || '';
         document.getElementById('wpObservacoes').value = wp.observacoes || '';
-        } else {
-    document.getElementById('tituloModalWp').textContent = 'Novo Waypoint';
-    btnExcluir.classList.add('hidden');
-    btnDuplicar.classList.add('hidden'); // Esconde o botão ao criar novo
-    document.getElementById('wpId').value = '';
-    document.getElementById('wpAtividade').value = '';
-    document.getElementById('wpCidade').value = '';
-
-        
-        // ALTERAÇÃO AQUI: Resetar Categoria
+      } else {
+        document.getElementById('tituloModalWp').textContent = 'Novo Waypoint';
+        btnExcluir.classList.add('hidden');
+        btnDuplicar.classList.add('hidden'); 
+        document.getElementById('wpId').value = '';
+        document.getElementById('wpAtividade').value = '';
+        document.getElementById('wpCidade').value = '';
         document.getElementById('wpCategoria').value = 'Outros'; 
-
         document.getElementById('wpData').value = '';
         document.getElementById('wpHora').value = '';
         document.getElementById('wpValorOrcado').value = '';
@@ -884,7 +948,6 @@
         linkFoto: document.getElementById('wpLinkFoto').value,
         linkMidia: document.getElementById('wpLinkMidia').value,
         observacoes: document.getElementById('wpObservacoes').value,
-        // ALTERAÇÃO AQUI: Lendo a categoria do formulário
         categoria: document.getElementById('wpCategoria').value 
       };
 
@@ -903,7 +966,10 @@
 
     async function excluirWaypointDoModal() {
       const idWaypoint = document.getElementById('wpId').value;
-      if (!idWaypoint || !confirm("Deseja excluir este waypoint?")) return;
+      if (!idWaypoint) return;
+
+      const confirmado = await showConfirm("Tem certeza que deseja excluir este waypoint? Esta ação não pode ser desfeita.", "Excluir Waypoint");
+      if (!confirmado) return;
       
       const idViagemAtual = document.getElementById('selectViagem').value;
       fecharModalWaypoint();
@@ -918,27 +984,20 @@
       } finally { esconderLoading(); }
     }
 
-    // Cole isso no seu HTML, dentro da tag <script>
-function duplicarWaypointNoModal() {
-  // 1. Limpa o ID. Ao salvar, o sistema vai tratar como um novo waypoint!
-  document.getElementById('wpId').value = '';
+    function duplicarWaypointNoModal() {
+      document.getElementById('wpId').value = '';
 
-  // 2. Adiciona "(Cópia)" ao final da atividade
-  const inputAtividade = document.getElementById('wpAtividade');
-  if (inputAtividade.value) {
-    inputAtividade.value = inputAtividade.value + " (Cópia)";
-  }
+      const inputAtividade = document.getElementById('wpAtividade');
+      if (inputAtividade.value) {
+        inputAtividade.value = inputAtividade.value + " (Cópia)";
+      }
 
-  // 3. Muda o título do Modal
-  document.getElementById('tituloModalWp').textContent = 'Novo Waypoint (Cópia)';
+      document.getElementById('tituloModalWp').textContent = 'Novo Waypoint (Cópia)';
+      document.getElementById('btnExcluirModal').classList.add('hidden');
+      document.getElementById('btnDuplicarModal').classList.add('hidden');
 
-  // 4. Esconde os botões
-  document.getElementById('btnExcluirModal').classList.add('hidden');
-  document.getElementById('btnDuplicarModal').classList.add('hidden');
-
-  alert("Pronto! Edite o horário ou outros dados e clique em 'Salvar Waypoint'.");
-}
-
+      showAlert("Cópia gerada! Edite os horários ou demais dados e clique em 'Salvar Waypoint'.", "Waypoint Duplicado", "sucesso");
+    }
 
     function abrirModalPagamento(id, valorAtual) {
       document.getElementById('pagWpId').value = id;
