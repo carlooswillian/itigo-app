@@ -975,14 +975,34 @@
       }
     }
 
-        async function salvarWaypoint() {
+            async function salvarWaypoint() {
       const selectViagemEl = document.getElementById('selectViagem');
-      // ... (mantenha o resgate da viagem, data e hora)
+      const idViagemAtual = selectViagemEl.value;
+      const nomeViagem = selectViagemEl.options[selectViagemEl.selectedIndex]?.text || "Viagem";
+
+      if (!idViagemAtual) {
+        showAlert("Selecione ou crie uma viagem antes de salvar o waypoint.", "Atenção", "aviso");
+        return;
+      }
+
+      // 1. Resgate e formatação da Data e Hora
+      let dataHoraCombinada = '';
+      const dataSelecionada = document.getElementById('wpData').value;
+      const horaSelecionada = document.getElementById('wpHora').value;
+      
+      if (dataSelecionada) {
+        dataHoraCombinada = dataSelecionada;
+        if (horaSelecionada) {
+          dataHoraCombinada += `T${horaSelecionada}:00`;
+        } else {
+          dataHoraCombinada += `T00:00:00`;
+        }
+      }
       
       const wpIdInput = document.getElementById('wpId').value;
       const valorOrcadoInput = parseFloat(document.getElementById('wpValorOrcado').value) || 0;
       
-      // Lógica NOVA: Preservar os gastosExtras se já existirem
+      // 2. Preservar os gastosExtras se já existirem
       let gastosExtrasAtual = '[]';
       if (wpIdInput) {
         const wpExistente = appData.waypoints.find(w => w.id === wpIdInput);
@@ -991,6 +1011,7 @@
         }
       }
 
+      // 3. Montagem do objeto Waypoint
       const wp = {
         id: wpIdInput,
         idViagem: idViagemAtual,
@@ -1001,10 +1022,8 @@
         valorOrcado: valorOrcadoInput,
         valorEstimado: valorOrcadoInput,
         valorPago: parseFloat(document.getElementById('wpValorPago').value) || 0,
-        gastosExtras: gastosExtrasAtual, // <- ADICIONE ESTA LINHA AQUI
+        gastosExtras: gastosExtrasAtual,
         linkFoto: document.getElementById('wpLinkFoto').value,
-        // ... (mantenha o resto)
-
         linkMidia: document.getElementById('wpLinkMidia').value,
         observacoes: document.getElementById('wpObservacoes').value,
         categoria: document.getElementById('wpCategoria').value 
@@ -1020,8 +1039,11 @@
           document.getElementById('selectViagem').value = idViagemAtual;
           carregarRoteiro(wp.id || res.id);
         }
-      } finally { esconderLoading(); }
+      } finally { 
+        esconderLoading(); 
+      }
     }
+
 
     async function excluirWaypointDoModal() {
       const idWaypoint = document.getElementById('wpId').value;
