@@ -222,19 +222,25 @@
   </div>
 
   <div id="modalPagamento" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4">
-      <h3 class="font-bold text-slate-900 text-lg">Registrar Pagamento</h3>
-      <input type="hidden" id="pagWpId">
-      <div>
-        <label class="text-xs font-semibold text-slate-500">Valor Pago Agora (R$)</label>
-        <input type="number" step="0.01" id="pagValorInput" class="w-full text-xl font-bold bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="flex gap-2">
-        <button onclick="fecharModalPagamento()" class="w-1/2 py-2.5 text-slate-500 font-semibold text-sm">Cancelar</button>
-        <button onclick="confirmarPagamentoRapido()" class="w-1/2 py-2.5 bg-blue-600 text-white font-semibold text-sm rounded-xl shadow">Confirmar</button>
-      </div>
+  <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4">
+    <h3 class="font-bold text-slate-900 text-lg">Registrar Pagamento / Gasto</h3>
+    <input type="hidden" id="pagWpId">
+    <div>
+      <label class="text-xs font-semibold text-slate-500">Valor Adicional / Pago (R$)</label>
+      <input type="number" step="0.01" id="pagValorInput" class="w-full text-xl font-bold bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    <!-- Novo campo opcional -->
+    <div>
+      <label class="text-xs font-semibold text-slate-500">Motivo do Gasto Extra (Opcional)</label>
+      <input type="text" id="pagMotivoInput" placeholder="Ex: Consumo frigobar" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+    </div>
+    <div class="flex gap-2">
+      <button onclick="fecharModalPagamento()" class="w-1/2 py-2.5 text-slate-500 font-semibold text-sm">Cancelar</button>
+      <button onclick="confirmarPagamentoRapido()" class="w-1/2 py-2.5 bg-blue-600 text-white font-semibold text-sm rounded-xl shadow">Confirmar</button>
     </div>
   </div>
+</div>
+
 
   <div id="modalLoading" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl flex flex-col items-center space-y-3">
@@ -1008,22 +1014,45 @@
     function fecharModalPagamento() { document.getElementById('modalPagamento').classList.add('hidden'); }
 
     async function confirmarPagamentoRapido() {
-      const realId = document.getElementById('pagWpId').value;
-      const val = parseFloat(document.getElementById('pagValorInput').value) || 0;
-      const idViagemAtual = document.getElementById('selectViagem').value;
+  const realId = document.getElementById('pagWpId').value;
+  const valorAdicional = parseFloat(document.getElementById('pagValorInput').value) || 0;
+  const motivoExtra = document.getElementById('pagMotivoInput').value.trim();
+  const idViagemAtual = document.getElementById('selectViagem').value;
 
-      fecharModalPagamento();
-      mostrarLoading("Registrando pagamento...");
+  // Encontra o waypoint atual para somar ao que já foi pago
+  const wpAtual = appData.waypoints.find(w => w.id === realId);
+  const valorJaPago = wpAtual ? (wpAtual.valorPago || 0) : 0;
+  const novoValorTotalPago = valorJaPago + valorAdicional;
 
-      try {
-        const res = await API({ action: 'atualizarPagamento', idWaypoint: realId, valorPago: val, statusPago: 'Sim' });
-        if(res.sucesso) {
-          await carregarDados();
-          document.getElementById('selectViagem').value = idViagemAtual;
-          carregarRoteiro(realId);
-        }
-      } finally { esconderLoading(); }
+  fecharModalPagamento();
+  mostrarLoading("Registrando gasto extra...");
+
+  // Se houver motivo, atualiza também as observações para histórico
+  let novasObservacoes = wpAtual.observacoes || '';
+  if (motivoExtra) {
+    novasObservacoes += `\n[Gasto Extra: R$ ${valorAdicional.toFixed(2)} - ${motivoExtra}]`;
+  }
+
+  try {
+    const res = await API({ 
+      action: 'salvarWaypoint', 
+      waypoint: { 
+        ...wpAtual, 
+        valorPago: novoValorTotalPago,
+        observacoes: novasObservacoes
+      } 
+    });
+    
+    if(res.sucesso) {
+      await carregarDados();
+      document.getElementById('selectViagem').value = idViagemAtual;
+      carregarRoteiro(realId);
     }
+  } finally { 
+    esconderLoading(); 
+  }
+}
+
   </script>
 </body>
 </html>
