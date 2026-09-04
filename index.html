@@ -110,6 +110,11 @@
     <i data-lucide="plus" class="w-6 h-6"></i>
   </button>
 
+    <!-- BOTÃO FLUTUANTE DE VOLTAR AO TOPO -->
+  <button id="btnVoltarTopo" onclick="voltarAoTopo()" class="fixed bottom-24 right-6 bg-slate-800 text-white p-3 rounded-full shadow-lg hover:bg-slate-900 active:scale-90 transition-all duration-300 z-30 opacity-0 pointer-events-none translate-y-4" title="Voltar ao topo">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+
   <div id="modalViagem" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
       <h3 class="font-bold text-slate-900 text-lg">Nova Viagem</h3>
@@ -266,6 +271,26 @@
       lucide.createIcons();
       verificarAutenticacaoRaiz();
     };
+
+        // Adicione esta lógica logo abaixo de window.onload ou no seu script principal
+    window.addEventListener('scroll', () => {
+      const btnTopo = document.getElementById('btnVoltarTopo');
+      if (window.scrollY > 300) {
+        btnTopo.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        btnTopo.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      } else {
+        btnTopo.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        btnTopo.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      }
+    });
+
+    function voltarAoTopo() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
 
     function verificarAutenticacaoRaiz() {
       const pinSalvo = localStorage.getItem('itigo_pin_raiz');
