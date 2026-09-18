@@ -316,24 +316,72 @@
     </div>
   </div>
 
-  <!-- MODAL FILTRO -->
+    <!-- MODAL FILTRO AVANÇADO -->
   <div id="modalFiltro" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto hide-scrollbar">
       <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-bold text-slate-900 text-lg">Filtrar Categoria</h3>
+        <h3 class="font-bold text-slate-900 text-lg">Filtros Avançados</h3>
         <button onclick="fecharModalFiltro()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <button onclick="aplicarFiltro('Todas')" class="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-indigo-50 transition">Mostrar Todas</button>
-        <button onclick="aplicarFiltro('Alimentação')" class="px-3 py-2 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold hover:bg-orange-100 transition">Alimentação</button>
-        <button onclick="aplicarFiltro('Hospedagem')" class="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition">Hospedagem</button>
-        <button onclick="aplicarFiltro('Transporte')" class="px-3 py-2 rounded-xl bg-sky-50 border border-sky-100 text-sky-700 text-xs font-bold hover:bg-sky-100 transition">Transporte</button>
-        <button onclick="aplicarFiltro('Passeios')" class="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition">Passeios</button>
-        <button onclick="aplicarFiltro('Lembranças')" class="px-3 py-2 rounded-xl bg-teal-50 border border-teal-100 text-teal-700 text-xs font-bold hover:bg-teal-100 transition">Lembranças</button>
-        <button onclick="aplicarFiltro('Outros')" class="px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">Outros</button>
+
+      <div class="space-y-3">
+        <!-- Status do Agendamento (Rascunhos vs Agendados) -->
+        <div>
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Status do Agendamento</label>
+          <select id="filtroData" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="Todos">Todos os pontos</option>
+            <option value="ComData">🗓️ Agendados (Com data e hora)</option>
+            <option value="SemData">📝 Rascunhos (Sem data/hora)</option>
+          </select>
+        </div>
+
+        <!-- Cidade (Dinâmico) -->
+        <div>
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Cidade / Local</label>
+          <select id="filtroCidade" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="Todas">Todas as cidades</option>
+            <!-- Injetado via JS -->
+          </select>
+        </div>
+
+        <!-- Financeiro -->
+        <div>
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Status Financeiro</label>
+          <select id="filtroFinanceiro" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="Todos">Todos</option>
+            <optgroup label="Orçamento">
+              <option value="Orcado">💰 Com orçamento definido</option>
+              <option value="NaoOrcado">⚠️ Falta definir orçamento</option>
+            </optgroup>
+            <optgroup label="Pagamento">
+              <option value="Pago">✅ Já pago (Total ou parcial)</option>
+              <option value="NaoPago">💳 Não pago (Valor zero)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Categoria -->
+        <div>
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Categoria</label>
+          <select id="filtroCategoria" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="Todas">Todas as categorias</option>
+            <option value="Alimentação">🍔 Alimentação</option>
+            <option value="Hospedagem">🏨 Hospedagem</option>
+            <option value="Transporte">🚗 Transporte</option>
+            <option value="Passeios">🎫 Passeios</option>
+            <option value="Lembranças">🛍️ Lembranças</option>
+            <option value="Outros">📌 Outros</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-2 justify-end pt-3 border-t mt-4">
+        <button onclick="limparFiltros()" class="px-4 py-2.5 text-slate-500 font-semibold text-sm hover:bg-slate-50 rounded-xl transition">Limpar</button>
+        <button onclick="salvarFiltros()" class="px-4 py-2.5 bg-indigo-600 text-white font-semibold text-sm rounded-xl shadow hover:bg-indigo-700 transition">Aplicar Filtros</button>
       </div>
     </div>
   </div>
+
 
 
   <div id="modalLoading" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
@@ -366,7 +414,12 @@
     let userPin = null;
 
         // Variáveis de controle de Filtro e Ordenação
-    let filtroCategoriaAtual = 'Todas';
+        let filtrosAtuais = {
+      categoria: 'Todas',
+      statusData: 'Todos',
+      cidade: 'Todas',
+      statusFinanceiro: 'Todos'
+    };
     let ordenacaoAtual = 'data'; 
 
     function abrirModalOrdenacao() { document.getElementById('modalOrdenacao').classList.remove('hidden'); lucide.createIcons(); }
@@ -387,21 +440,69 @@
       carregarRoteiro(); // Recarrega aplicando
     }
 
-    function abrirModalFiltro() { document.getElementById('modalFiltro').classList.remove('hidden'); lucide.createIcons(); }
-    function fecharModalFiltro() { document.getElementById('modalFiltro').classList.add('hidden'); }
-    
-    function aplicarFiltro(categoria) {
-      filtroCategoriaAtual = categoria;
-      fecharModalFiltro();
+        function abrirModalFiltro() { 
+      const idViagem = document.getElementById('selectViagem').value;
+      const waypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
+
+      // Gerar dropdown de cidades automaticamente baseado nos pontos cadastrados
+      const selectCidade = document.getElementById('filtroCidade');
+      selectCidade.innerHTML = '<option value="Todas">Todas as cidades</option>';
       
+      const cidadesUnicas = [...new Set(waypoints.map(w => w.cidade?.trim()).filter(c => c))].sort();
+      cidadesUnicas.forEach(cidade => {
+        const opt = document.createElement('option');
+        opt.value = cidade;
+        opt.textContent = cidade;
+        selectCidade.appendChild(opt);
+      });
+
+      // Puxar os valores que estão ativos no momento
+      document.getElementById('filtroData').value = filtrosAtuais.statusData;
+      document.getElementById('filtroCidade').value = filtrosAtuais.cidade;
+      document.getElementById('filtroFinanceiro').value = filtrosAtuais.statusFinanceiro;
+      document.getElementById('filtroCategoria').value = filtrosAtuais.categoria;
+
+      document.getElementById('modalFiltro').classList.remove('hidden'); 
+      lucide.createIcons(); 
+    }
+    
+    function fecharModalFiltro() { 
+      document.getElementById('modalFiltro').classList.add('hidden'); 
+    }
+    
+    function salvarFiltros() {
+      filtrosAtuais = {
+        statusData: document.getElementById('filtroData').value,
+        cidade: document.getElementById('filtroCidade').value,
+        statusFinanceiro: document.getElementById('filtroFinanceiro').value,
+        categoria: document.getElementById('filtroCategoria').value
+      };
+      fecharModalFiltro();
+      atualizarBotaoFiltroUI();
+      carregarRoteiro(); // Recarrega aplicando
+    }
+
+    function limparFiltros() {
+      filtrosAtuais = { categoria: 'Todas', statusData: 'Todos', cidade: 'Todas', statusFinanceiro: 'Todos' };
+      fecharModalFiltro();
+      atualizarBotaoFiltroUI();
+      carregarRoteiro();
+    }
+
+    function atualizarBotaoFiltroUI() {
       const btn = document.getElementById('btnFiltroRoteiro');
-      if (categoria !== 'Todas') {
+      // Verifica se existe algum filtro ativo diferente do padrão ('Todas'/'Todos')
+      const temFiltroAtivo = Object.values(filtrosAtuais).some(v => v !== 'Todas' && v !== 'Todos');
+      
+      if (temFiltroAtivo) {
         btn.classList.add('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
         btn.classList.remove('text-slate-500', 'bg-white', 'border-slate-200');
       } else {
         btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
         btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
       }
+    }
+
       carregarRoteiro(); // Recarrega aplicando
     }
 
@@ -716,12 +817,45 @@
       const container = document.getElementById('listaWaypoints');
       container.innerHTML = '';
 
-      // 1. Filtrar pela Viagem Atual e Categoria
+            // 1. Filtrar pela Viagem Atual e Filtros Avançados
       let waypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
       
-      if (filtroCategoriaAtual !== 'Todas') {
-        waypoints = waypoints.filter(w => w.categoria === filtroCategoriaAtual);
+      // Filtro de Categoria
+      if (filtrosAtuais.categoria !== 'Todas') {
+        waypoints = waypoints.filter(w => w.categoria === filtrosAtuais.categoria);
       }
+
+      // Filtro de Status de Data (Agendados vs Rascunhos)
+      if (filtrosAtuais.statusData === 'ComData') {
+        waypoints = waypoints.filter(w => w.dataHora && w.dataHora.trim() !== '');
+      } else if (filtrosAtuais.statusData === 'SemData') {
+        waypoints = waypoints.filter(w => !w.dataHora || w.dataHora.trim() === '');
+      }
+
+      // Filtro de Cidade
+      if (filtrosAtuais.cidade !== 'Todas') {
+        waypoints = waypoints.filter(w => w.cidade && w.cidade.trim().toLowerCase() === filtrosAtuais.cidade.toLowerCase());
+      }
+
+      // Filtro Financeiro (Orçamentos e Pagamentos)
+      if (filtrosAtuais.statusFinanceiro !== 'Todos') {
+        waypoints = waypoints.filter(w => {
+          const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
+          
+          let valorPagoItem = w.valorPago || 0;
+          if (w.gastosExtras) {
+            try { valorPagoItem += JSON.parse(w.gastosExtras).reduce((s, c) => s + c.valor, 0); } catch(e){}
+          }
+
+          if (filtrosAtuais.statusFinanceiro === 'Orcado') return valorOrcadoItem > 0;
+          if (filtrosAtuais.statusFinanceiro === 'NaoOrcado') return valorOrcadoItem === 0;
+          if (filtrosAtuais.statusFinanceiro === 'Pago') return valorPagoItem > 0;
+          if (filtrosAtuais.statusFinanceiro === 'NaoPago') return valorPagoItem === 0;
+          
+          return true;
+        });
+      }
+
 
       // 2. Aplicar a Ordenação Solicitada
       waypoints.sort((a, b) => {
