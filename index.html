@@ -107,14 +107,15 @@
         </div>
 
         <!-- Ferramentas de Roteiro (Apenas Ícones) -->
-        <div class="flex items-center gap-1.5 shrink-0 pl-2">
-          <button class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ordenar Roteiro">
-            <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
-          </button>
-          <button class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Filtrar Roteiro">
-            <i data-lucide="filter" class="w-4 h-4"></i>
-          </button>
-        </div>
+<div class="flex items-center gap-1.5 shrink-0 pl-2">
+  <button id="btnOrdenacaoRoteiro" onclick="abrirModalOrdenacao()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ordenar Roteiro">
+    <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+  </button>
+  <button id="btnFiltroRoteiro" onclick="abrirModalFiltro()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Filtrar Roteiro">
+    <i data-lucide="filter" class="w-4 h-4"></i>
+  </button>
+</div>
+
 
       </div>
 
@@ -300,6 +301,41 @@
     </div>
   </div>
 
+    <!-- MODAL ORDENAÇÃO -->
+  <div id="modalOrdenacao" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-slate-900 text-lg">Ordenar por</h3>
+        <button onclick="fecharModalOrdenacao()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="flex flex-col gap-2">
+        <button onclick="aplicarOrdenacao('data')" class="text-left px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:border-indigo-200 transition">🗓️ Data / Cronológico (Padrão)</button>
+        <button onclick="aplicarOrdenacao('maior_orcado')" class="text-left px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:border-indigo-200 transition">💰 Maior Valor Orçado</button>
+        <button onclick="aplicarOrdenacao('maior_pago')" class="text-left px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:border-indigo-200 transition">💳 Maior Valor Pago</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FILTRO -->
+  <div id="modalFiltro" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-slate-900 text-lg">Filtrar Categoria</h3>
+        <button onclick="fecharModalFiltro()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="aplicarFiltro('Todas')" class="col-span-2 px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-indigo-50 transition">Mostrar Todas</button>
+        <button onclick="aplicarFiltro('Alimentação')" class="px-3 py-2 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold hover:bg-orange-100 transition">Alimentação</button>
+        <button onclick="aplicarFiltro('Hospedagem')" class="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition">Hospedagem</button>
+        <button onclick="aplicarFiltro('Transporte')" class="px-3 py-2 rounded-xl bg-sky-50 border border-sky-100 text-sky-700 text-xs font-bold hover:bg-sky-100 transition">Transporte</button>
+        <button onclick="aplicarFiltro('Passeios')" class="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition">Passeios</button>
+        <button onclick="aplicarFiltro('Lembranças')" class="px-3 py-2 rounded-xl bg-teal-50 border border-teal-100 text-teal-700 text-xs font-bold hover:bg-teal-100 transition">Lembranças</button>
+        <button onclick="aplicarFiltro('Outros')" class="px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-200 transition">Outros</button>
+      </div>
+    </div>
+  </div>
+
+
   <div id="modalLoading" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl flex flex-col items-center space-y-3">
       <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
@@ -328,6 +364,47 @@
   <script>
     let appData = { viagens: [], waypoints: [] };
     let userPin = null;
+
+        // Variáveis de controle de Filtro e Ordenação
+    let filtroCategoriaAtual = 'Todas';
+    let ordenacaoAtual = 'data'; 
+
+    function abrirModalOrdenacao() { document.getElementById('modalOrdenacao').classList.remove('hidden'); lucide.createIcons(); }
+    function fecharModalOrdenacao() { document.getElementById('modalOrdenacao').classList.add('hidden'); }
+    
+    function aplicarOrdenacao(tipo) {
+      ordenacaoAtual = tipo;
+      fecharModalOrdenacao();
+      
+      const btn = document.getElementById('btnOrdenacaoRoteiro');
+      if (tipo !== 'data') {
+        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+        btn.classList.remove('text-slate-500', 'bg-white', 'border-slate-200');
+      } else {
+        btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+        btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
+      }
+      carregarRoteiro(); // Recarrega aplicando
+    }
+
+    function abrirModalFiltro() { document.getElementById('modalFiltro').classList.remove('hidden'); lucide.createIcons(); }
+    function fecharModalFiltro() { document.getElementById('modalFiltro').classList.add('hidden'); }
+    
+    function aplicarFiltro(categoria) {
+      filtroCategoriaAtual = categoria;
+      fecharModalFiltro();
+      
+      const btn = document.getElementById('btnFiltroRoteiro');
+      if (categoria !== 'Todas') {
+        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+        btn.classList.remove('text-slate-500', 'bg-white', 'border-slate-200');
+      } else {
+        btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+        btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
+      }
+      carregarRoteiro(); // Recarrega aplicando
+    }
+
 
     // --- FUNÇÕES DO MODAL CUSTOMIZADO (ALERT / CONFIRM) ---
     function showAlert(mensagem, titulo = "Aviso", tipo = 'info') {
@@ -634,36 +711,56 @@
       carregarRoteiro(idMaisProximo);
     }
 
-    function carregarRoteiro(idWaypointParaFocar = null) {
+        function carregarRoteiro(idWaypointParaFocar = null) {
       const idViagem = document.getElementById('selectViagem').value;
       const container = document.getElementById('listaWaypoints');
       container.innerHTML = '';
 
-      const waypoints = appData.waypoints
-        .filter(w => w.idViagem === idViagem)
-        .sort((a, b) => {
-          if (!a.dataHora) return 1;
-          if (!b.dataHora) return -1;
-          return new Date(a.dataHora) - new Date(b.dataHora);
-        });
+      // 1. Filtrar pela Viagem Atual e Categoria
+      let waypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
+      
+      if (filtroCategoriaAtual !== 'Todas') {
+        waypoints = waypoints.filter(w => w.categoria === filtroCategoriaAtual);
+      }
 
-      const gruposPorHorario = {};
+      // 2. Aplicar a Ordenação Solicitada
+      waypoints.sort((a, b) => {
+        if (ordenacaoAtual === 'maior_orcado') {
+           const valA = a.valorOrcado !== undefined ? a.valorOrcado : (a.valorEstimado || 0);
+           const valB = b.valorOrcado !== undefined ? b.valorOrcado : (b.valorEstimado || 0);
+           return valB - valA;
+        } else if (ordenacaoAtual === 'maior_pago') {
+           let pagoA = a.valorPago || 0;
+           if (a.gastosExtras) { try { pagoA += JSON.parse(a.gastosExtras).reduce((s, c) => s + c.valor, 0); } catch(e){} }
+           
+           let pagoB = b.valorPago || 0;
+           if (b.gastosExtras) { try { pagoB += JSON.parse(b.gastosExtras).reduce((s, c) => s + c.valor, 0); } catch(e){} }
+           return pagoB - pagoA;
+        } else {
+           // 'data' (Cronológico - Padrão)
+           if (!a.dataHora) return 1;
+           if (!b.dataHora) return -1;
+           return new Date(a.dataHora) - new Date(b.dataHora);
+        }
+      });
+
+      // 3. Cálculo Financeiro (Mantendo a lógica de agrupar o Orçado caso partilhem horário)
+      const gruposParaFinanceiro = {};
       waypoints.forEach(w => {
-        const chave = w.dataHora ? w.dataHora : `sem_data_${Math.random()}`;
-        if (!gruposPorHorario[chave]) gruposPorHorario[chave] = [];
-        gruposPorHorario[chave].push(w);
+        const chaveTempo = w.dataHora ? w.dataHora : `sem_data_${Math.random()}`;
+        if (!gruposParaFinanceiro[chaveTempo]) gruposParaFinanceiro[chaveTempo] = [];
+        gruposParaFinanceiro[chaveTempo].push(w);
       });
 
       let orcadoTotal = 0;
       let pago = 0;
       let diferencaGeral = 0; 
 
-      Object.keys(gruposPorHorario).forEach(chave => {
-        const itens = gruposPorHorario[chave];
+      Object.values(gruposParaFinanceiro).forEach(itens => {
         const maiorOrcadoDoHorario = Math.max(...itens.map(w => (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0))));
         orcadoTotal += maiorOrcadoDoHorario;
 
-                itens.forEach(w => {
+        itens.forEach(w => {
           const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
           
           let somaExtras = 0;
@@ -675,16 +772,15 @@
           }
           
           const valorPagoItem = (w.valorPago || 0) + somaExtras;
-          
           pago += valorPagoItem;
           
           if (valorPagoItem > 0) {
             diferencaGeral += (valorOrcadoItem - valorPagoItem);
           }
         });
-
       });
 
+      // Atualiza o Topbar Financeiro
       document.getElementById('totalOrcado').textContent = `R$ ${orcadoTotal.toFixed(2)}`;
       document.getElementById('totalPago').textContent = `R$ ${pago.toFixed(2)}`;
 
@@ -692,7 +788,7 @@
       const labelFalta = document.getElementById('labelFalta');
       const totalFalta = document.getElementById('totalFalta');
 
-            if (diferencaGeral < 0) {
+      if (diferencaGeral < 0) {
         totalFalta.textContent = `R$ ${Math.abs(diferencaGeral).toFixed(2)}`;
         containerFalta.className = "flex flex-col items-end px-2 py-0.5 rounded-md bg-rose-50 transition-colors";
         labelFalta.className = "text-[9px] font-bold text-rose-600 uppercase";
@@ -707,34 +803,51 @@
       }
 
       if (waypoints.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-slate-400 font-medium text-sm">Nenhum ponto adicionado a esta viagem.</div>`;
+        container.innerHTML = `<div class="text-center py-10 text-slate-400 font-medium text-sm">Nenhum ponto encontrado.</div>`;
         return;
       }
 
+      // 4. Preparar Grupos para Renderização da Tela
+      const gruposPorRender = {};
+      waypoints.forEach((w, index) => {
+        let chaveRender;
+        // Se NÃO estivermos ordenando por data, cancelamos o carrossel. 
+        // Cada item ganha uma chave única, sendo renderizado um embaixo do outro.
+        if (ordenacaoAtual !== 'data') {
+            chaveRender = `item_isolado_${index}`;
+        } else {
+            chaveRender = w.dataHora ? w.dataHora : `sem_data_${Math.random()}`;
+        }
+        
+        if (!gruposPorRender[chaveRender]) gruposPorRender[chaveRender] = [];
+        gruposPorRender[chaveRender].push(w);
+      });
+
       let elementoParaFocar = null;
 
-      Object.keys(gruposPorHorario).forEach(chave => {
-        const itensDoHorario = gruposPorHorario[chave];
-        const primeiroWp = itensDoHorario[0];
+      Object.keys(gruposPorRender).forEach(chave => {
+        const itensDoGrupo = gruposPorRender[chave];
+        const primeiroWp = itensDoGrupo[0];
 
         const blocoDiv = document.createElement('div');
         blocoDiv.className = "space-y-2";
 
-        if (itensDoHorario.length > 1 && primeiroWp.dataHora) {
+        // Se estivermos agrupando por carrossel (mesma data/hora), exibe o título da hora
+        if (itensDoGrupo.length > 1 && primeiroWp.dataHora && ordenacaoAtual === 'data') {
           const headerOpcoes = document.createElement('div');
           headerOpcoes.className = "flex items-center gap-1.5 text-xs text-indigo-600 font-bold px-1";
           headerOpcoes.innerHTML = `<i data-lucide="clock" class="w-3.5 h-3.5"></i><span>${formatarData(primeiroWp.dataHora)}</span>`;
           blocoDiv.appendChild(headerOpcoes);
         }
 
-        if (itensDoHorario.length > 1) {
+        if (itensDoGrupo.length > 1) {
           const carrosselContainerDiv = document.createElement('div');
           carrosselContainerDiv.className = "space-y-2";
 
           const carrosselDiv = document.createElement('div');
           carrosselDiv.className = "flex gap-3 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1 w-full";
 
-          itensDoHorario.forEach((w) => {
+          itensDoGrupo.forEach((w) => {
             const cardHtml = criarCardHTML(w, false);
             const cardWrapper = document.createElement('div');
             cardWrapper.id = `card-wp-${w.id}`;
@@ -750,7 +863,7 @@
           const dotsDiv = document.createElement('div');
           dotsDiv.className = "flex justify-center items-center gap-1.5 pt-1";
           
-          itensDoHorario.forEach((_, index) => {
+          itensDoGrupo.forEach((_, index) => {
             const dot = document.createElement('button');
             dot.className = `w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-indigo-600 w-4' : 'bg-slate-300'}`;
             dot.onclick = () => {
@@ -777,8 +890,11 @@
           carrosselContainerDiv.appendChild(dotsDiv);
           blocoDiv.appendChild(carrosselContainerDiv);
         } else {
-          const w = itensDoHorario[0];
-          const cardHtml = criarCardHTML(w, true);
+          const w = itensDoGrupo[0];
+          // Se estivermos listando um embaixo do outro sem ser por data, exibe a data DENTRO do card
+          const exibirDataNoCard = (ordenacaoAtual !== 'data' || !w.dataHora);
+          const cardHtml = criarCardHTML(w, exibirDataNoCard);
+          
           const cardWrapper = document.createElement('div');
           cardWrapper.id = `card-wp-${w.id}`;
           cardWrapper.className = "transition-all duration-300";
@@ -793,6 +909,7 @@
 
       lucide.createIcons();
 
+      // Rolar até o elemento (caso auto-foco)
       if (elementoParaFocar) {
         setTimeout(() => {
           elementoParaFocar.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -803,6 +920,7 @@
         }, 150);
       }
     }
+
 
     function criarCardHTML(w, exibirDataHoraNoCard = false) {
       const temCidade = w.cidade && w.cidade.trim() !== "";
