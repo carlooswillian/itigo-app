@@ -509,7 +509,7 @@
       }
     }
 
-    function renderizarSeletorViagem() {
+        function renderizarSeletorViagem() {
       const select = document.getElementById('selectViagem');
       select.innerHTML = '';
 
@@ -525,32 +525,51 @@
         select.appendChild(opt);
       });
 
-      carregarRoteiroComFocoAutomatico();
-    }
-
-    function carregarRoteiroComFocoAutomatico() {
-      const idViagem = document.getElementById('selectViagem').value;
-      const waypointsViagem = appData.waypoints.filter(w => w.idViagem === idViagem && w.dataHora);
-
-      let idMaisProximo = null;
-      if (waypointsViagem.length > 0) {
+      // --- NOVA LÓGICA: Encontrar a viagem com o evento mais próximo ---
+      let idViagemFoco = null;
+      if (appData.waypoints && appData.waypoints.length > 0) {
         const agora = new Date().getTime();
-        let menorDiferenca = Infinity;
+        let menorDiferencaFutura = Infinity;
+        let menorDiferencaAbsoluta = Infinity;
+        let idViagemFutura = null;
+        let idViagemAbsoluta = null;
 
-        waypointsViagem.forEach(w => {
-          const tempoWp = new Date(w.dataHora).getTime();
-          if (!isNaN(tempoWp)) {
-            const diferenca = Math.abs(tempoWp - agora);
-            if (diferenca < menorDiferenca) {
-              menorDiferenca = diferenca;
-              idMaisProximo = w.id;
+        appData.waypoints.forEach(w => {
+          if (w.dataHora) {
+            const tempoWp = new Date(w.dataHora).getTime();
+            if (!isNaN(tempoWp)) {
+              const diferenca = tempoWp - agora;
+              
+              // Prioriza waypoints que ainda vão acontecer (ou estão acontecendo)
+              if (diferenca >= 0 && diferenca < menorDiferencaFutura) {
+                menorDiferencaFutura = diferenca;
+                idViagemFutura = w.idViagem;
+              }
+
+              // Guarda o mais próximo em valor absoluto como plano B 
+              // (útil se a viagem mais recente acabou de passar)
+              const diferencaAbs = Math.abs(diferenca);
+              if (diferencaAbs < menorDiferencaAbsoluta) {
+                menorDiferencaAbsoluta = diferencaAbs;
+                idViagemAbsoluta = w.idViagem;
+              }
             }
           }
         });
+
+        // Usa a viagem com evento futuro mais próximo, ou cai para o absoluto se todas já passaram
+        idViagemFoco = idViagemFutura || idViagemAbsoluta;
       }
 
-      carregarRoteiro(idMaisProximo);
+      // Altera o select para a viagem encontrada
+      if (idViagemFoco) {
+        select.value = idViagemFoco;
+      }
+      // -----------------------------------------------------------------
+
+      carregarRoteiroComFocoAutomatico();
     }
+
 
     function carregarRoteiro(idWaypointParaFocar = null) {
       const idViagem = document.getElementById('selectViagem').value;
