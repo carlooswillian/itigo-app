@@ -87,41 +87,39 @@
         </button>
       </div>
 
-      <!-- NÍVEL 3: Resumo Financeiro (Mais limpo) -->
-      <div class="px-4 pb-3 pt-1">
-        <div id="cardFinanceiro" class="flex items-center justify-between">
-          <div class="flex gap-4">
-            <div class="flex flex-col">
-              <span class="text-[9px] font-bold text-slate-400 uppercase">Orçado</span>
-              <span id="totalOrcado" class="text-xs font-bold text-slate-600">R$ 0</span>
-            </div>
-            <div class="flex flex-col">
-              <span class="text-[9px] font-bold text-blue-500 uppercase">Pago</span>
-              <span id="totalPago" class="text-xs font-bold text-blue-600">R$ 0</span>
-            </div>
+      <!-- NÍVEL 3: Resumo Financeiro e Ferramentas (Mesclados) -->
+      <div class="px-4 pb-3 pt-1 flex items-center justify-between">
+        
+        <!-- Bloco Financeiro -->
+        <div id="cardFinanceiro" class="flex items-center gap-3">
+          <div class="flex flex-col">
+            <span class="text-[9px] font-bold text-slate-400 uppercase">Orçado</span>
+            <span id="totalOrcado" class="text-xs font-bold text-slate-600">R$ 0</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[9px] font-bold text-blue-500 uppercase">Pago</span>
+            <span id="totalPago" class="text-xs font-bold text-blue-600">R$ 0</span>
           </div>
           <div id="containerFalta" class="flex flex-col items-end px-2 py-0.5 rounded-md bg-slate-100 transition-colors">
-            <span id="labelFalta" class="text-[9px] font-bold text-slate-500 uppercase">Diferença</span>
+            <span id="labelFalta" class="text-[9px] font-bold text-slate-500 uppercase">Dif</span>
             <span id="totalFalta" class="text-xs font-bold text-slate-700">R$ 0</span>
           </div>
         </div>
-      </div>
 
-      <!-- NÍVEL 4: Toolbar de Ferramentas dos Waypoints (Novos Botões) -->
-      <div class="bg-slate-50/90 border-t border-slate-200 px-4 py-2 flex items-center justify-between">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Roteiro</span>
-        <div class="flex items-center gap-2">
-          <button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95">
-            <i data-lucide="arrow-up-down" class="w-3.5 h-3.5 text-slate-400"></i> Ordenar
+        <!-- Ferramentas de Roteiro (Apenas Ícones) -->
+        <div class="flex items-center gap-1.5 shrink-0 pl-2">
+          <button class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ordenar Roteiro">
+            <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
           </button>
-          <button class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95">
-            <i data-lucide="filter" class="w-3.5 h-3.5 text-slate-400"></i> Filtrar
+          <button class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Filtrar Roteiro">
+            <i data-lucide="filter" class="w-4 h-4"></i>
           </button>
         </div>
+
       </div>
 
     </div>
-  </div>
+  </div> 
 
     <!-- CONTAINER PRINCIPAL DO ROTEIRO -->
   <main class="max-w-md mx-auto p-4">
