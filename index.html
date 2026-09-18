@@ -424,8 +424,9 @@
 
     function abrirModalOrdenacao() { document.getElementById('modalOrdenacao').classList.remove('hidden'); lucide.createIcons(); }
     function fecharModalOrdenacao() { document.getElementById('modalOrdenacao').classList.add('hidden'); }
-    
-    function aplicarOrdenacao(tipo) {
+
+
+        function aplicarOrdenacao(tipo) {
       ordenacaoAtual = tipo;
       fecharModalOrdenacao();
       
@@ -437,8 +438,9 @@
         btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
         btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
       }
-  
-        function abrirModalFiltro() { 
+    } // <--- Esta chave que faltava para fechar a ordenação!
+
+    function abrirModalFiltro() { 
       const idViagem = document.getElementById('selectViagem').value;
       const waypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
 
@@ -501,9 +503,11 @@
       }
     }
 
-      carregarRoteiro(); // Recarrega aplicando
-    }
+    // --- FUNÇÕES DO MODAL CUSTOMIZADO (ALERT / CONFIRM) ---
 
+    
+    
+        
 
     // --- FUNÇÕES DO MODAL CUSTOMIZADO (ALERT / CONFIRM) ---
     function showAlert(mensagem, titulo = "Aviso", tipo = 'info') {
