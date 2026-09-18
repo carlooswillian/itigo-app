@@ -97,6 +97,28 @@
       </div>
     </div>
 
+    <!-- BANCO DE IDEIAS / RASCUNHOS -->
+<div id="containerRascunhos" class="hidden mb-6">
+  <button onclick="toggleRascunhos()" class="w-full flex items-center justify-between bg-amber-50 border border-amber-200 p-3 rounded-xl shadow-sm transition">
+    <div class="flex items-center gap-2 text-amber-700 font-bold text-sm">
+      <i data-lucide="lightbulb" class="w-5 h-5"></i>
+      <span>Banco de Ideias (<span id="qtdRascunhos">0</span>)</span>
+    </div>
+    <i data-lucide="chevron-down" id="iconToggleRascunhos" class="w-5 h-5 text-amber-600 transition-transform"></i>
+  </button>
+  
+  <div id="listaRascunhos" class="hidden mt-3 space-y-2">
+    <!-- Os itens de rascunho vão aparecer aqui em formato reduzido -->
+  </div>
+</div>
+<!-- FIM BANCO DE IDEIAS -->
+
+<!-- ROTEIRO OFICIAL -->
+<div class="flex items-center gap-2 mb-3 mt-6">
+  <i data-lucide="calendar-days" class="w-5 h-5 text-indigo-600"></i>
+  <h2 class="font-bold text-slate-800 text-lg">Roteiro Oficial</h2>
+</div>
+
     <div class="space-y-4" id="listaWaypoints"></div>
   </main>
 
@@ -313,6 +335,20 @@
         prepararModalAlerta(mensagem, titulo, 'aviso', true, resolve);
       });
     }
+
+    function toggleRascunhos() {
+  const lista = document.getElementById('listaRascunhos');
+  const icone = document.getElementById('iconToggleRascunhos');
+  
+  if (lista.classList.contains('hidden')) {
+    lista.classList.remove('hidden');
+    icone.classList.add('rotate-180');
+  } else {
+    lista.classList.add('hidden');
+    icone.classList.remove('rotate-180');
+  }
+}
+
 
     function prepararModalAlerta(mensagem, titulo, tipo, isConfirm, resolve) {
       const modal = document.getElementById('modalAlertaCustom');
@@ -565,97 +601,185 @@
       carregarRoteiroComFocoAutomatico();
     }
 
-    // ALTERAÇÃO AQUI: Rola para o PRÓXIMO waypoint a acontecer na viagem selecionada
-    function carregarRoteiroComFocoAutomatico() {
-      const idViagem = document.getElementById('selectViagem').value;
-      const waypointsViagem = appData.waypoints.filter(w => w.idViagem === idViagem && w.dataHora);
+    function carregarRoteiro(idWaypointParaFocar = null) {
+  const idViagem = document.getElementById('selectViagem').value;
+  const containerRoteiro = document.getElementById('listaWaypoints');
+  const containerRascunhos = document.getElementById('containerRascunhos');
+  const listaRascunhos = document.getElementById('listaRascunhos');
+  
+  containerRoteiro.innerHTML = '';
+  listaRascunhos.innerHTML = '';
 
-      let idMaisProximo = null;
-      if (waypointsViagem.length > 0) {
-        const agora = new Date().getTime();
-        let menorDiferencaFutura = Infinity;
-        let menorDiferencaPassada = Infinity;
-        let idFuturo = null;
-        let idPassado = null;
+  const todosWaypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
+  
+  // SEPARAR: Rascunhos (sem data) x Roteiro Oficial (com data)
+  const rascunhos = todosWaypoints.filter(w => !w.dataHora);
+  const roteiro = todosWaypoints.filter(w => w.dataHora).sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
 
-        waypointsViagem.forEach(w => {
-          const tempoWp = new Date(w.dataHora).getTime();
-          if (!isNaN(tempoWp)) {
-            const diferenca = tempoWp - agora;
-            if (diferenca >= 0) {
-              // Futuro ou Agora
-              if (diferenca < menorDiferencaFutura) {
-                menorDiferencaFutura = diferenca;
-                idFuturo = w.id;
-              }
-            } else {
-              // Passado
-              const difAbs = Math.abs(diferenca);
-              if (difAbs < menorDiferencaPassada) {
-                menorDiferencaPassada = difAbs;
-                idPassado = w.id;
-              }
-            }
+  // --- 1. RENDERIZAR RASCUNHOS ---
+  if (rascunhos.length > 0) {
+    containerRascunhos.classList.remove('hidden');
+    document.getElementById('qtdRascunhos').textContent = rascunhos.length;
+    
+    rascunhos.forEach(w => {
+      listaRascunhos.innerHTML += criarCardRascunhoHTML(w);
+    });
+  } else {
+    containerRascunhos.classList.add('hidden');
+  }
+
+  // --- 2. CÁLCULO FINANCEIRO (Soma tudo: Roteiro + Rascunho) ---
+  let orcadoTotal = 0;
+  let pago = 0;
+  let diferencaGeral = 0; 
+
+  todosWaypoints.forEach(w => {
+    const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
+    let somaExtras = 0;
+    if (w.gastosExtras) {
+      try {
+        const extrasArr = JSON.parse(w.gastosExtras);
+        somaExtras = extrasArr.reduce((acc, curr) => acc + curr.valor, 0);
+      } catch(e) {}
+    }
+    const valorPagoItem = (w.valorPago || 0) + somaExtras;
+    
+    orcadoTotal += valorOrcadoItem;
+    pago += valorPagoItem;
+    
+    if (valorPagoItem > 0) {
+      diferencaGeral += (valorOrcadoItem - valorPagoItem);
+    }
+  });
+
+  document.getElementById('totalOrcado').textContent = `R$ ${orcadoTotal.toFixed(2)}`;
+  document.getElementById('totalPago').textContent = `R$ ${pago.toFixed(2)}`;
+  
+  const containerFalta = document.getElementById('containerFalta');
+  const labelFalta = document.getElementById('labelFalta');
+  const totalFalta = document.getElementById('totalFalta');
+
+  if (diferencaGeral < 0) {
+    totalFalta.textContent = `R$ ${Math.abs(diferencaGeral).toFixed(2)}`;
+    containerFalta.className = "bg-rose-50 p-2.5 rounded-xl transition-colors";
+    labelFalta.className = "block text-[10px] font-bold text-rose-600 uppercase";
+    totalFalta.className = "text-sm font-extrabold text-rose-700";
+    labelFalta.textContent = "Excedido";
+  } else {
+    totalFalta.textContent = `R$ ${diferencaGeral.toFixed(2)}`;
+    containerFalta.className = "bg-emerald-50 p-2.5 rounded-xl transition-colors";
+    labelFalta.className = "block text-[10px] font-bold text-emerald-600 uppercase";
+    totalFalta.className = "text-sm font-extrabold text-emerald-700";
+    labelFalta.textContent = "Economia";
+  }
+
+  // --- 3. RENDERIZAR ROTEIRO OFICIAL ---
+  if (roteiro.length === 0) {
+    containerRoteiro.innerHTML = `<div class="text-center py-10 text-slate-400 font-medium text-sm">Nenhum evento agendado nesta viagem.</div>`;
+    lucide.createIcons();
+    return;
+  }
+
+  const gruposPorHorario = {};
+  roteiro.forEach(w => {
+    const chave = w.dataHora; 
+    if (!gruposPorHorario[chave]) gruposPorHorario[chave] = [];
+    gruposPorHorario[chave].push(w);
+  });
+
+  let elementoParaFocar = null;
+
+  Object.keys(gruposPorHorario).forEach(chave => {
+    const itensDoHorario = gruposPorHorario[chave];
+    const primeiroWp = itensDoHorario[0];
+
+    const blocoDiv = document.createElement('div');
+    blocoDiv.className = "space-y-2";
+
+    const headerOpcoes = document.createElement('div');
+    headerOpcoes.className = "flex items-center gap-1.5 text-xs text-indigo-600 font-bold px-1";
+    headerOpcoes.innerHTML = `<i data-lucide="clock" class="w-3.5 h-3.5"></i><span>${formatarData(primeiroWp.dataHora)}</span>`;
+    blocoDiv.appendChild(headerOpcoes);
+
+    if (itensDoHorario.length > 1) {
+      // Lógica do Carrossel (mantida intacta)
+      const carrosselContainerDiv = document.createElement('div');
+      carrosselContainerDiv.className = "space-y-2";
+
+      const carrosselDiv = document.createElement('div');
+      carrosselDiv.className = "flex gap-3 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1 w-full";
+
+      itensDoHorario.forEach((w) => {
+        const cardHtml = criarCardHTML(w, false); // não precisa de data no card, tá no header
+        const cardWrapper = document.createElement('div');
+        cardWrapper.id = `card-wp-${w.id}`;
+        cardWrapper.className = "w-full flex-shrink-0 snap-start transition-all duration-300";
+        cardWrapper.innerHTML = cardHtml;
+        carrosselDiv.appendChild(cardWrapper);
+
+        if (w.id === idWaypointParaFocar) elementoParaFocar = cardWrapper;
+      });
+
+      carrosselContainerDiv.appendChild(carrosselDiv);
+
+      const dotsDiv = document.createElement('div');
+      dotsDiv.className = "flex justify-center items-center gap-1.5 pt-1";
+      
+      itensDoHorario.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${index === 0 ? 'bg-indigo-600 w-4' : 'bg-slate-300'}`;
+        dot.onclick = () => {
+          const targetCard = carrosselDiv.children[index];
+          if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        };
+        dotsDiv.appendChild(dot);
+      });
+
+      carrosselDiv.addEventListener('scroll', () => {
+        const scrollLeft = carrosselDiv.scrollLeft;
+        const cardWidth = carrosselDiv.offsetWidth;
+        const activeIndex = Math.round(scrollLeft / cardWidth);
+        
+        Array.from(dotsDiv.children).forEach((dot, idx) => {
+          if (idx === activeIndex) {
+            dot.className = "w-4 h-2 rounded-full bg-indigo-600 transition-all";
+          } else {
+            dot.className = "w-2 h-2 rounded-full bg-slate-300 transition-all";
           }
         });
-        
-        // Foca no próximo evento a acontecer, caso não haja, foca no mais recente passado
-        idMaisProximo = idFuturo || idPassado;
-      }
+      });
 
-      carregarRoteiro(idMaisProximo);
+      carrosselContainerDiv.appendChild(dotsDiv);
+      blocoDiv.appendChild(carrosselContainerDiv);
+    } else {
+      // Lógica de item único
+      const w = itensDoHorario[0];
+      const cardHtml = criarCardHTML(w, false); // Data já tá no cabeçalho
+      const cardWrapper = document.createElement('div');
+      cardWrapper.id = `card-wp-${w.id}`;
+      cardWrapper.className = "transition-all duration-300";
+      cardWrapper.innerHTML = cardHtml;
+      blocoDiv.appendChild(cardWrapper);
+
+      if (w.id === idWaypointParaFocar) elementoParaFocar = cardWrapper;
     }
 
-    function carregarRoteiro(idWaypointParaFocar = null) {
-      const idViagem = document.getElementById('selectViagem').value;
-      const container = document.getElementById('listaWaypoints');
-      container.innerHTML = '';
+    containerRoteiro.appendChild(blocoDiv);
+  });
 
-      const waypoints = appData.waypoints
-        .filter(w => w.idViagem === idViagem)
-        .sort((a, b) => {
-          if (!a.dataHora) return 1;
-          if (!b.dataHora) return -1;
-          return new Date(a.dataHora) - new Date(b.dataHora);
-        });
+  lucide.createIcons();
 
-      const gruposPorHorario = {};
-      waypoints.forEach(w => {
-        const chave = w.dataHora ? w.dataHora : `sem_data_${Math.random()}`;
-        if (!gruposPorHorario[chave]) gruposPorHorario[chave] = [];
-        gruposPorHorario[chave].push(w);
-      });
+  if (elementoParaFocar) {
+    setTimeout(() => {
+      elementoParaFocar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      elementoParaFocar.classList.add('ring-4', 'ring-indigo-500', 'ring-offset-2', 'scale-[1.02]');
+      setTimeout(() => {
+        elementoParaFocar.classList.remove('ring-4', 'ring-indigo-500', 'ring-offset-2', 'scale-[1.02]');
+      }, 2000);
+    }, 150);
+  }
+}
 
-      let orcadoTotal = 0;
-      let pago = 0;
-      let diferencaGeral = 0; 
-
-      Object.keys(gruposPorHorario).forEach(chave => {
-        const itens = gruposPorHorario[chave];
-        const maiorOrcadoDoHorario = Math.max(...itens.map(w => (w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0))));
-        orcadoTotal += maiorOrcadoDoHorario;
-
-                itens.forEach(w => {
-          const valorOrcadoItem = w.valorOrcado !== undefined ? w.valorOrcado : (w.valorEstimado || 0);
-          
-          let somaExtras = 0;
-          if (w.gastosExtras) {
-            try {
-              const extrasArr = JSON.parse(w.gastosExtras);
-              somaExtras = extrasArr.reduce((acc, curr) => acc + curr.valor, 0);
-            } catch(e) {}
-          }
-          
-          const valorPagoItem = (w.valorPago || 0) + somaExtras;
-          
-          pago += valorPagoItem;
-          
-          if (valorPagoItem > 0) {
-            diferencaGeral += (valorOrcadoItem - valorPagoItem);
-          }
-        });
-
-      });
 
       document.getElementById('totalOrcado').textContent = `R$ ${orcadoTotal.toFixed(2)}`;
       document.getElementById('totalPago').textContent = `R$ ${pago.toFixed(2)}`;
@@ -775,6 +899,37 @@
         }, 150);
       }
     }
+
+
+    function criarCardRascunhoHTML(w) {
+  // Define a cor da categoria para o rascunho
+  let corBadge = "bg-slate-100 text-slate-500 border-slate-200";
+  if (w.categoria === "Alimentação") corBadge = "bg-orange-50 text-orange-600 border-orange-200";
+  if (w.categoria === "Hospedagem") corBadge = "bg-indigo-50 text-indigo-600 border-indigo-200";
+  if (w.categoria === "Transporte") corBadge = "bg-sky-50 text-sky-600 border-sky-200";
+  if (w.categoria === "Passeios") corBadge = "bg-emerald-50 text-emerald-600 border-emerald-200";
+
+  // Reutilizamos a função abrirModalWaypoint. Quando você salvar com data, 
+  // ele automaticamente sai do rascunho e vai pro Roteiro!
+  return `
+    <div class="bg-white border border-amber-200 rounded-xl p-3 flex items-center justify-between shadow-sm">
+      <div class="flex-1 min-w-0 pr-2">
+        <h4 class="font-bold text-slate-800 text-sm truncate">${w.atividade}</h4>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-[10px] font-semibold ${corBadge} border px-1.5 py-0.5 rounded uppercase">
+            ${w.categoria || 'Geral'}
+          </span>
+          ${w.cidade ? `<span class="text-[10px] text-slate-500 truncate"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${w.cidade}</span>` : ''}
+        </div>
+      </div>
+      
+      <button onclick='abrirModalWaypoint(${JSON.stringify(w).replace(/'/g, "&#39;")})' class="flex-shrink-0 bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
+        <i data-lucide="calendar-plus" class="w-4 h-4"></i> Agendar
+      </button>
+    </div>
+  `;
+}
+
 
     function criarCardHTML(w, exibirDataHoraNoCard = false) {
       const temCidade = w.cidade && w.cidade.trim() !== "";
