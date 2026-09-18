@@ -437,9 +437,7 @@
         btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
         btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
       }
-      carregarRoteiro(); // Recarrega aplicando
-    }
-
+  
         function abrirModalFiltro() { 
       const idViagem = document.getElementById('selectViagem').value;
       const waypoints = appData.waypoints.filter(w => w.idViagem === idViagem);
