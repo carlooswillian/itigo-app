@@ -41,64 +41,78 @@
     </div>
   </div>
 
-  <header class="sticky top-0 z-40 glass border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
-    <div class="flex items-center gap-2">
-      <div class="bg-indigo-600 text-white p-2 rounded-xl shadow">
-        <i data-lucide="compass" class="w-5 h-5"></i>
-      </div>
-      <h1 class="font-bold text-xl tracking-tight text-slate-900">Iti<span class="text-indigo-600">Go</span></h1>
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="abrirDetalhes()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Detalhes da Viagem">
-        <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i>
-      </button>
-      <button onclick="sairDoPainel()" class="flex items-center justify-center p-2 rounded-xl border border-slate-300 bg-white shadow-sm hover:bg-slate-50 active:scale-95 transition" title="Bloquear Painel">
-        <i data-lucide="lock" class="w-5 h-5 text-indigo-600"></i>
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-md mx-auto p-4 space-y-4">
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
-      <div class="flex items-center justify-between gap-2">
-        <label class="text-xs font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">Viagem Selecionada</label>
-        <div class="flex items-center gap-2 text-xs font-bold">
-          <button onclick="abrirModalRenomearViagem()" class="text-slate-600 hover:text-indigo-600 flex items-center gap-1 transition whitespace-nowrap" title="Renomear Viagem Atual">
-            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+    <!-- NOVO CABEÇALHO + PAINEL DE VIAGEM (Tudo fixo no topo) -->
+  <div class="sticky top-0 z-40 glass border-b border-slate-200 shadow-sm">
+    <div class="max-w-md mx-auto w-full">
+      <!-- Topbar com Logo e Ações Principais -->
+      <div class="px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="bg-indigo-600 text-white p-1.5 rounded-lg shadow-sm">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+          </div>
+          <h1 class="font-bold text-lg tracking-tight text-slate-900">Iti<span class="text-indigo-600">Go</span></h1>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button onclick="abrirDetalhes()" class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition" title="Detalhes da Viagem">
+            <i data-lucide="pie-chart" class="w-4 h-4"></i>
           </button>
-          <span class="text-slate-300">|</span>
-          <button onclick="abrirModalViagem()" class="text-indigo-600 hover:underline flex items-center gap-1 whitespace-nowrap">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Nova Viagem
+          <button onclick="sairDoPainel()" class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition" title="Bloquear Painel">
+            <i data-lucide="lock" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
-      <select id="selectViagem" onchange="carregarRoteiroComFocoAutomatico()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        <option value="">Carregando viagens...</option>
-      </select>
 
-      <button onclick="compartilharViagemAtual()" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 py-2.5 rounded-xl hover:bg-indigo-100 transition">
-        <i data-lucide="share-2" class="w-4 h-4"></i>
-        <span>Compartilhar Link desta Viagem</span>
-      </button>
+      <!-- Painel Minimalista de Seleção e Resumo -->
+      <div class="px-4 pb-3 space-y-2">
+        <!-- Linha 1: Label e Ícones (Lápis, Compartilhar, Plus) -->
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Viagem</label>
+          <div class="flex items-center gap-3">
+            <button onclick="abrirModalRenomearViagem()" class="text-slate-400 hover:text-indigo-600 transition" title="Renomear Viagem">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="compartilharViagemAtual()" class="text-slate-400 hover:text-indigo-600 transition" title="Compartilhar Viagem">
+              <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+            </button>
+            <div class="w-px h-3 bg-slate-300"></div> <!-- Divisória sutil -->
+            <button onclick="abrirModalViagem()" class="text-indigo-600 hover:text-indigo-800 transition" title="Nova Viagem">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
 
-      <div id="cardFinanceiro" class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
-        <div class="bg-slate-50 p-2.5 rounded-xl">
-          <span class="block text-[10px] font-bold text-slate-400 uppercase">Orçado</span>
-          <span id="totalOrcado" class="text-sm font-extrabold text-slate-700">R$ 0</span>
-        </div>
-        <div class="bg-blue-50 p-2.5 rounded-xl">
-          <span class="block text-[10px] font-bold text-blue-600 uppercase">Pago</span>
-          <span id="totalPago" class="text-sm font-extrabold text-blue-700">R$ 0</span>
-        </div>
-        <div id="containerFalta" class="bg-slate-50 p-2.5 rounded-xl transition-colors">
-          <span id="labelFalta" class="block text-[10px] font-bold text-slate-500 uppercase">Diferença</span>
-          <span id="totalFalta" class="text-sm font-extrabold text-slate-700">R$ 0</span>
+        <!-- Linha 2: Select minimalista -->
+        <select id="selectViagem" onchange="carregarRoteiroComFocoAutomatico()" class="w-full bg-white/60 border border-slate-200 rounded-lg p-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm">
+          <option value="">Carregando viagens...</option>
+        </select>
+
+        <!-- Linha 3: Resumo Financeiro Inline (Compacto) -->
+        <div id="cardFinanceiro" class="flex items-center justify-between pt-1">
+          <div class="flex gap-4">
+            <div class="flex flex-col">
+              <span class="text-[9px] font-bold text-slate-400 uppercase">Orçado</span>
+              <span id="totalOrcado" class="text-xs font-bold text-slate-600">R$ 0</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[9px] font-bold text-blue-500 uppercase">Pago</span>
+              <span id="totalPago" class="text-xs font-bold text-blue-600">R$ 0</span>
+            </div>
+          </div>
+          <div id="containerFalta" class="flex flex-col items-end px-2 py-0.5 rounded-md bg-slate-100 transition-colors">
+            <span id="labelFalta" class="text-[9px] font-bold text-slate-500 uppercase">Diferença</span>
+            <span id="totalFalta" class="text-xs font-bold text-slate-700">R$ 0</span>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="space-y-4" id="listaWaypoints"></div>
+  <!-- CONTAINER PRINCIPAL DO ROTEIRO -->
+  <main class="max-w-md mx-auto p-4">
+    <!-- O padding top dá um respiro logo abaixo do cabeçalho fixo -->
+    <div class="space-y-4 pt-1" id="listaWaypoints"></div>
   </main>
+
 
   <button onclick="abrirModalWaypoint()" class="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 active:scale-90 transition z-30">
     <i data-lucide="plus" class="w-6 h-6"></i>
@@ -664,17 +678,17 @@
       const labelFalta = document.getElementById('labelFalta');
       const totalFalta = document.getElementById('totalFalta');
 
-      if (diferencaGeral < 0) {
+            if (diferencaGeral < 0) {
         totalFalta.textContent = `R$ ${Math.abs(diferencaGeral).toFixed(2)}`;
-        containerFalta.className = "bg-rose-50 p-2.5 rounded-xl transition-colors";
-        labelFalta.className = "block text-[10px] font-bold text-rose-600 uppercase";
-        totalFalta.className = "text-sm font-extrabold text-rose-700";
+        containerFalta.className = "flex flex-col items-end px-2 py-0.5 rounded-md bg-rose-50 transition-colors";
+        labelFalta.className = "text-[9px] font-bold text-rose-600 uppercase";
+        totalFalta.className = "text-xs font-bold text-rose-700";
         labelFalta.textContent = "Excedido";
       } else {
         totalFalta.textContent = `R$ ${diferencaGeral.toFixed(2)}`;
-        containerFalta.className = "bg-emerald-50 p-2.5 rounded-xl transition-colors";
-        labelFalta.className = "block text-[10px] font-bold text-emerald-600 uppercase";
-        totalFalta.className = "text-sm font-extrabold text-emerald-700";
+        containerFalta.className = "flex flex-col items-end px-2 py-0.5 rounded-md bg-emerald-50 transition-colors";
+        labelFalta.className = "text-[9px] font-bold text-emerald-600 uppercase";
+        totalFalta.className = "text-xs font-bold text-emerald-700";
         labelFalta.textContent = "Economia";
       }
 
