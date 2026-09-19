@@ -425,20 +425,23 @@
     function abrirModalOrdenacao() { document.getElementById('modalOrdenacao').classList.remove('hidden'); lucide.createIcons(); }
     function fecharModalOrdenacao() { document.getElementById('modalOrdenacao').classList.add('hidden'); }
 
+    function aplicarOrdenacao(tipo) {
+  ordenacaoAtual = tipo;
+  fecharModalOrdenacao();
+  
+  const btn = document.getElementById('btnOrdenacaoRoteiro');
+  if (tipo !== 'data') {
+    btn.classList.add('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+    btn.classList.remove('text-slate-500', 'bg-white', 'border-slate-200');
+  } else {
+    btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
+    btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
+  }
 
-        function aplicarOrdenacao(tipo) {
-      ordenacaoAtual = tipo;
-      fecharModalOrdenacao();
-      
-      const btn = document.getElementById('btnOrdenacaoRoteiro');
-      if (tipo !== 'data') {
-        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
-        btn.classList.remove('text-slate-500', 'bg-white', 'border-slate-200');
-      } else {
-        btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-200');
-        btn.classList.add('text-slate-500', 'bg-white', 'border-slate-200');
-      }
-    } // <--- Esta chave que faltava para fechar a ordenação!
+  // CORREÇÃO: Força o roteiro a ser renderizado novamente com a nova ordem
+  carregarRoteiro();
+}
+
 
     function abrirModalFiltro() { 
       const idViagem = document.getElementById('selectViagem').value;
@@ -859,7 +862,7 @@
       }
 
 
-      // 2. Aplicar a Ordenação Solicitada
+            // 2. Aplicar a Ordenação Solicitada
       waypoints.sort((a, b) => {
         if (ordenacaoAtual === 'maior_orcado') {
            const valA = a.valorOrcado !== undefined ? a.valorOrcado : (a.valorEstimado || 0);
@@ -874,6 +877,8 @@
            return pagoB - pagoA;
         } else {
            // 'data' (Cronológico - Padrão)
+           // CORREÇÃO: Lidar com o cenário onde AMBOS os itens não possuem data
+           if (!a.dataHora && !b.dataHora) return 0;
            if (!a.dataHora) return 1;
            if (!b.dataHora) return -1;
            return new Date(a.dataHora) - new Date(b.dataHora);
