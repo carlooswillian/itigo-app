@@ -1030,13 +1030,17 @@
 
           carrosselContainerDiv.appendChild(dotsDiv);
           blocoDiv.appendChild(carrosselContainerDiv);
-        } else {
+                } else {
           const w = itensDoGrupo[0];
-          // Se estivermos listando um embaixo do outro sem ser por data, exibe a data DENTRO do card
-          const exibirDataNoCard = (ordenacaoAtual !== 'data' || !w.dataHora);
+          
+          // CORREÇÃO: Força a variável a ser TRUE para que a data/hora
+          // sempre apareça dentro do card quando ele for o único item do horário.
+          const exibirDataNoCard = true; 
+          
           const cardHtml = criarCardHTML(w, exibirDataNoCard);
           
           const cardWrapper = document.createElement('div');
+
           cardWrapper.id = `card-wp-${w.id}`;
           cardWrapper.className = "transition-all duration-300";
           cardWrapper.innerHTML = cardHtml;
