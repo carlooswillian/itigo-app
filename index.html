@@ -106,15 +106,19 @@
           </div>
         </div>
 
-        <!-- Ferramentas de Roteiro (Apenas Ícones) -->
-<div class="flex items-center gap-1.5 shrink-0 pl-2">
-  <button id="btnOrdenacaoRoteiro" onclick="abrirModalOrdenacao()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ordenar Roteiro">
-    <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
-  </button>
-  <button id="btnFiltroRoteiro" onclick="abrirModalFiltro()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Filtrar Roteiro">
-    <i data-lucide="filter" class="w-4 h-4"></i>
-  </button>
-</div>
+                <!-- Ferramentas de Roteiro (Apenas Ícones) -->
+        <div class="flex items-center gap-1.5 shrink-0 pl-2">
+          <button onclick="abrirMapaGeral()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ver Rota no Mapa">
+            <i data-lucide="map" class="w-4 h-4"></i>
+          </button>
+          <button id="btnOrdenacaoRoteiro" onclick="abrirModalOrdenacao()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Ordenar Roteiro">
+            <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+          </button>
+          <button id="btnFiltroRoteiro" onclick="abrirModalFiltro()" class="p-1.5 rounded-lg text-slate-500 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition active:scale-95" title="Filtrar Roteiro">
+            <i data-lucide="filter" class="w-4 h-4"></i>
+          </button>
+        </div>
+
 
 
       </div>
@@ -412,6 +416,8 @@
 
   <script>
     let appData = { viagens: [], waypoints: [] };
+    let waypointsVisiveis = [];
+
     let userPin = null;
 
         // Variáveis de controle de Filtro e Ordenação
@@ -890,6 +896,9 @@
            return new Date(a.dataHora) - new Date(b.dataHora);
         }
       });
+
+// SALVA OS PONTOS FILTRADOS/ORDENADOS PARA O MAPA GERAL
+      waypointsVisiveis = waypoints;
 
 
       // 3. Cálculo Financeiro (Mantendo a lógica de agrupar o Orçado caso partilhem horário)
@@ -1582,6 +1591,29 @@ function obterCorCidade(cidade) {
   const index = Math.abs(hash) % paleta.length;
   return paleta[index];
 }
+
+    function abrirMapaGeral() {
+      if (!waypointsVisiveis || waypointsVisiveis.length === 0) {
+        showAlert("Nenhum ponto visível na tela para exibir no mapa.", "Mapa Vazio", "aviso");
+        return;
+      }
+
+      if (waypointsVisiveis.length > 20) {
+        showAlert("Você tem muitos pontos na tela. O Google Maps traça rotas ideais com até 15-20 pontos. Recomendamos filtrar por Cidade antes de abrir o mapa.", "Muitos Pontos", "info");
+      }
+
+      // Constrói a URL do Google Maps com todos os pontos listados na tela
+      const baseUrl = "https://www.google.com/maps/dir/";
+      const paradas = waypointsVisiveis.map(w => {
+        // Usa a Atividade e a Cidade para o Google achar o local exato
+        const termoBusca = w.cidade ? `${w.atividade}, ${w.cidade}` : w.atividade;
+        return encodeURIComponent(termoBusca);
+      }).join('/');
+      
+      // Abre a rota do Google Maps em uma nova guia
+      window.open(baseUrl + paradas, '_blank');
+    }
+
 
   </script>
 
